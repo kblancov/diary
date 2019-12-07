@@ -165,14 +165,14 @@ class GlobalDiary
 	    }
 	} 
     
-    void mainMenu(){
-        // system ("cls");
-        cout << "\x1B[2J\x1B[H"; //mixies based
+    void mainMenu(){        
         
         int option=9;
         
         while (option!=0){
+        	//cout << "\x1B[2J\x1B[H"; //mixies based
             cout<<"*****************************************************************"<<endl;
+            system("clear");
             cout<< "Wellcome to the Diary App Main Menu"<<endl;
             cout<< "Select one of the next options by entering the option number:"<<endl;
             cout<< "1. Add Item"<<endl;
@@ -186,12 +186,17 @@ class GlobalDiary
             cout<<"Please enter the option"<<endl;
             cin>> option;
             if (option==1){
+            	system("clear");
                 cout<<"Option 1. Menu: "<<endl;
                 numItems=numItems+1;
                 newItem(numItems);
                 item[numItems].printDiaryItemData();
+                cout<<"Press enter to continue"<<endl;
+                getchar();
             } else if (option==2){
-                cout<<"Option 2. Menu: "<<endl;
+                cout<<"Option 2. Menu: "<<endl;  
+				cout << "Press Enter to Continue";
+				cin.ignore();
             } else if (option==3){
                 cout<<"Option 3. Menu: "<<endl;
             } else if (option==4){
@@ -204,7 +209,7 @@ class GlobalDiary
             } else if (option==0){
                 cout<<"Thank you, have a nice day. "<<endl;
             } else {
-                cout<<"Stupid Option"<<endl;
+                cout<<"Invalid Option"<<endl;
             }
             
         }
@@ -213,10 +218,10 @@ class GlobalDiary
     }
 };
 
-
 int main()
 
 {
+      //clearConsole();
       //Declare a GlobalDiary object
       GlobalDiary diary;
       //Call the main Diary menu
