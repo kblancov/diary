@@ -26,55 +26,79 @@ class Date
 	//Parametrized constructor
 	Date(int dd, int mm, int yy)
 	{
-	      if(dd >= 1 && dd <= 31)
-		    day = dd;
-	      else
-		    day = 1;
-        if(mm >= 1 && mm <= 12)
+	    if(dd >= 1 && dd <= 31){
+			day = dd;
+		}
+	    else{
+			day = 1;
+			cout<<endl<< "Warning: the entered day is not valid"<<endl;
+			cout<< "Day value set to: "<<day<<endl;
+		  }
+        if(mm >= 1 && mm <= 12){
 		    month = mm;
-	      else
-		    month = 1;
-	      if(yy >= 2000 && yy <= 2099)
+		}
+	    else{
+			month = 1;
+			cout<<endl<< "Warning: the entered month is not valid"<<endl;
+			cout<< "Month value set to: "<<month<<endl;
+		}
+	    if(yy >= 2000 && yy <= 2099){
 		    year = yy;
-	      else
-		    year = 2000;
+		}
+		else{
+			year = 2000;
+			cout<<endl<< "Warning: the entered year is not valid"<<endl;
+			cout<< "Year value set to: "<<year<<endl;
+		}
 	}
 
 	//sets a valid date
 	void setDate(int dd, int mm, int yy)
 	{
-	      if(dd >= 1 && dd <= 31)
-		    day = dd;
-	      else
-		    day = 1;
-        if(mm >= 1 && mm <= 12)
+	    if(dd >= 1 && dd <= 31){
+			day = dd;
+		}
+	    else{
+			day = 1;
+			cout<<endl<< "Warning: the entered day is not valid"<<endl;
+			cout<< "Day value set to: "<<day<<endl;
+		  }
+        if(mm >= 1 && mm <= 12){
 		    month = mm;
-	      else
-		    month = 1;
-	      if(yy >= 2000 && yy <= 2099)
+		}
+	    else{
+			month = 1;
+			cout<<endl<< "Warning: the entered month is not valid"<<endl;
+			cout<< "Month value set to: "<<month<<endl;
+		}
+	    if(yy >= 2000 && yy <= 2099){
 		    year = yy;
-	      else
-		    year = 2000;
+		}
+		else{
+			year = 2000;
+			cout<<endl<< "Warning: the entered year is not valid"<<endl;
+			cout<< "Year value set to: "<<year<<endl;
+		}
 	}
 
 	//returns the month, day and year
 	void getDate(int& dd, int& mm, int& yy)
 	{
-	      dd = day;
+	    dd = day;
         mm = month;
-	      yy =year;
+	    yy =year;
 	}
 
 	//displays the month, day and year to the screen
 	void printDate()
 	{
-	      if(day < 10)
+	    if(day < 10)
 		    cout << "0";
-	      cout << day << "-";
+	    cout << day << "-";
         if(month < 10)
 		    cout << "0";
-	      cout << month << "-";
-	      cout << year;
+	    cout << month << "-";
+	    cout << year;
 	}
 	//Destructor
 	~Date()
@@ -97,32 +121,32 @@ class Item
 	//default constructor
 	Item ()
 	{
- 	      itemDescription="";
- 	      id=0;
+ 	    id=0;
+		itemDescription="";
 	}
 
 	//Parametrized constructor
 	Item (int code, string description, int dd, int mm, int yyyy)
 	{
-	        id=code;
-      		itemDescription = description;
-		    itemDate.setDate(dd, mm, yyyy);
+	    id=code;
+      	itemDescription = description;
+		itemDate.setDate(dd, mm, yyyy);
 	}
 
 	//Sets Item data
 	void setItem(int code, string description, int dd, int mm, int yyyy)
 	{
-      		id=code;
-      		itemDescription = description;
-		    itemDate.setDate(dd, mm, yyyy);
+      	id=code;
+      	itemDescription = description;
+	    itemDate.setDate(dd, mm, yyyy);
 	}
 
 	//Prints Item Data
 	void printItem()
 	{
-	      cout << "- Item " << id << ": | ";
-		  itemDate.printDate();
-	      cout << " | " << itemDescription << " | " <<endl;
+	    cout << "- Item " << id << ": | ";
+		itemDate.printDate();
+	    cout << " | " << itemDescription << " | " <<endl;
 	}
 
 	//Destructor
@@ -140,7 +164,7 @@ class Diary
     //Counter for the current number of Items
     int numItems;
     //Array of items
-    Item itemsArr[10];
+    Item itemsArr[100];
     
 	//Public member functions
     public:
@@ -148,6 +172,24 @@ class Diary
     Diary (){
         numItems=0;
     }
+
+	// Clear the whole console, provided by Dr. Mustafa Bozkurt
+	void clearConsole() {
+    	cout << "\x1B[2J\x1B[H";
+	}
+	
+	// Pause execution waiting for a key, provided by Dr. Mustafa Bozkurt
+	void menuPause() {
+		cout << endl << "Press any key to continue..." << endl;
+    	cin.ignore();
+    	cin.get();
+	}
+
+	// Read a line from the console including spaces
+	string readLine(string& description) {
+    	cin.ignore();
+		getline(cin,description);
+	}
 
 	//Print All Items in the Diary
 	void printAllItems (){
@@ -162,18 +204,7 @@ class Diary
 		menuPause();
 	} 
 
-	// Clear the whole console, provided by Dr. Mustafa Bozkurt
-	void clearConsole() {
-    	cout << "\x1B[2J\x1B[H";
-	}
-	
-	// Pause execution waiting for a key, provided by Dr. Mustafa Bozkurt
-	void menuPause() {
-		cout << endl << "Press any key to continue..." << endl;
-    	cin.ignore();
-    	cin.get();
-	}
-
+	//
 	void addItem()
 	{
 	    string description;
@@ -184,12 +215,12 @@ class Diary
 			cout<<"*****************************************************************"<<endl;
 			cout<< "			Add Item Option"<<endl<<endl;
 			cout<<"Please enter description of your new event"<<endl;
-			cin>> description;
-			cout<<"Please enter Day"<<endl;
+			readLine(description);
+			cout<<"Please enter Day, number from 1 to 31"<<endl;
 			cin>> dd;
-			cout<<"Please enter Month"<<endl;
+			cout<<"Please enter Month, number from 1 to 12"<<endl;
 			cin>> mm;
-			cout<<"Please enter Year"<<endl;
+			cout<<"Please enter Year, number from 2000 to 2099"<<endl;
 			cin>> yyyy;
 			numItems++;
 			itemsArr[numItems-1].setItem(numItems,description,dd,mm,yyyy);
@@ -233,7 +264,7 @@ class Diary
             } else if (option==6){
                 printAllItems ();
             } else if (option==0){
-                cout<<"Thank you for using The Diary App, have a nice day. "<<endl;
+                cout<<endl<<"Thank you for using The Diary App, have a nice day. "<<endl<<endl;
             } else {
                 cout<<"Invalid Option"<<endl;
             }
