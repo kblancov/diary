@@ -141,6 +141,18 @@ class Item
 	    itemDate.setDate(dd, mm, yyyy);
 	}
 
+	//Sets Item id
+	void setId(int code)
+	{
+      	id=code;
+	}
+
+	//Get Item id
+	void getId(int& code)
+	{
+      	code=id;
+	}
+
 	//Prints Item Data
 	void printItem()
 	{
@@ -194,17 +206,12 @@ class Diary
 	//Print All Items in the Diary
 	void printAllItems (){
 	    int i;
-		clearConsole();
-		cout<<"*****************************************************************"<<endl;
-		cout<< "			Print all Items"<<endl<<endl;
 	    for (i=0;i<numItems;i++){
 	        itemsArr[i].printItem();
 	    }
-		cout<<endl<<"Going back to previous menu."<<endl;
-		menuPause();
 	} 
 
-	//
+	//Member function for adding an Item
 	void addItem()
 	{
 	    string description;
@@ -226,8 +233,35 @@ class Diary
 			itemsArr[numItems-1].setItem(numItems,description,dd,mm,yyyy);
 			cout<<endl<<"The item:"<<numItems<<" was added to your Diary:"<<endl;
 			itemsArr[numItems-1].printItem();
-			cout<<endl<<"Going back to previous menu."<<endl;
 			menuPause();
+	}
+
+	//Member function for removing an Item
+	void removeItem()
+	{
+	    int code;
+		clearConsole();
+		cout<<"*****************************************************************"<<endl;
+		cout<< "			Remove Item Option"<<endl<<endl;
+		if(numItems<1){
+			cout<<"There are no items in the App"<<endl;
+			menuPause();
+		} else {
+			cout<<"Enter the item number to be removed from this list :"<<endl<<endl;
+			printAllItems();
+			cout<<endl<<"Enter a number from 1 to "<<numItems<<endl;
+			cin>> code;
+			int i;
+			for(i=code-1;i<numItems-1;i++){
+				//I dont know why i can do this, ask Moustafa
+				itemsArr[i]=itemsArr[i+1];
+				itemsArr[i].setId(i+1);
+			}
+			numItems--;
+			cout<<"The new list is:"<<endl<<endl;
+			printAllItems();
+			menuPause();
+		}
 	}
     
     void mainMenu(){        
@@ -254,7 +288,7 @@ class Diary
             if (option==1){
                 addItem();
             } else if (option==2){
-                cout<<"Option 2. Menu: "<<endl;
+                removeItem();
             } else if (option==3){
                 cout<<"Option 3. Menu: "<<endl;
             } else if (option==4){
@@ -262,7 +296,12 @@ class Diary
             } else if (option==5){
                 cout<<"Option 5. Menu: "<<endl;
             } else if (option==6){
+				clearConsole();
+				cout<<"*****************************************************************"<<endl;
+				cout<< "			Print all Items"<<endl<<endl;
                 printAllItems ();
+				cout<<endl<<"Going back to previous menu."<<endl;
+				menuPause();
             } else if (option==0){
                 cout<<endl<<"Thank you for using The Diary App, have a nice day. "<<endl<<endl;
             } else {
