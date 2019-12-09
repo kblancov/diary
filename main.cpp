@@ -218,22 +218,22 @@ class Diary
 	    int dd;
 	    int mm;
 	    int yyyy;
-			clearConsole();
-			cout<<"*****************************************************************"<<endl;
-			cout<< "			Add Item Option"<<endl<<endl;
-			cout<<"Please enter description of your new event"<<endl;
-			readLine(description);
-			cout<<"Please enter Day, number from 1 to 31"<<endl;
-			cin>> dd;
-			cout<<"Please enter Month, number from 1 to 12"<<endl;
-			cin>> mm;
-			cout<<"Please enter Year, number from 2000 to 2099"<<endl;
-			cin>> yyyy;
-			numItems++;
-			itemsArr[numItems-1].setItem(numItems,description,dd,mm,yyyy);
-			cout<<endl<<"The item:"<<numItems<<" was added to your Diary:"<<endl;
-			itemsArr[numItems-1].printItem();
-			menuPause();
+		clearConsole();
+		cout<<"*****************************************************************"<<endl;
+		cout<< "			Add Item Option"<<endl<<endl;
+		cout<<"Please enter description of your new event"<<endl;
+		readLine(description);
+		cout<<"Please enter Day, number from 1 to 31"<<endl;
+		cin>> dd;
+		cout<<"Please enter Month, number from 1 to 12"<<endl;
+		cin>> mm;
+		cout<<"Please enter Year, number from 2000 to 2099"<<endl;
+		cin>> yyyy;
+		numItems++;
+		itemsArr[numItems-1].setItem(numItems,description,dd,mm,yyyy);
+		cout<<endl<<"The item:"<<numItems<<" was added to your Diary:"<<endl;
+		itemsArr[numItems-1].printItem();
+		menuPause();
 	}
 
 	//Member function for removing an Item
@@ -258,6 +258,40 @@ class Diary
 				itemsArr[i].setId(i+1);
 			}
 			numItems--;
+			cout<<"The new list is:"<<endl<<endl;
+			printAllItems();
+			menuPause();
+		}
+	}
+
+	//Member function for edting an Item
+	void editItem()
+	{
+	    int dd;
+	    int mm;
+	    int yyyy;
+		string description;
+		int code;
+		clearConsole();
+		cout<<"*****************************************************************"<<endl;
+		cout<< "			Edit Item Option"<<endl<<endl;
+		if(numItems<1){
+			cout<<"There are no items in the App"<<endl;
+			menuPause();
+		} else {
+			cout<<"Enter the item number to be edited from this list :"<<endl<<endl;
+			printAllItems();
+			cout<<endl<<"Enter a number from 1 to "<<numItems<<endl;
+			cin>> code;
+			cout<<"Please enter the new description for your event"<<endl;
+			readLine(description);
+			cout<<"Please enter the new Day, number from 1 to 31"<<endl;
+			cin>> dd;
+			cout<<"Please enter the new Month, number from 1 to 12"<<endl;
+			cin>> mm;
+			cout<<"Please enter the newYear, number from 2000 to 2099"<<endl;
+			cin>> yyyy;
+			itemsArr[code-1].setItem(code,description,dd,mm,yyyy);
 			cout<<"The new list is:"<<endl<<endl;
 			printAllItems();
 			menuPause();
@@ -290,7 +324,7 @@ class Diary
             } else if (option==2){
                 removeItem();
             } else if (option==3){
-                cout<<"Option 3. Menu: "<<endl;
+                editItem();
             } else if (option==4){
                 cout<<"Option 4. Menu: "<<endl;
             } else if (option==5){
