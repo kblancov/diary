@@ -192,7 +192,7 @@ class Diary
 	
 	// Pause execution waiting for a key, provided by Dr. Mustafa Bozkurt
 	void menuPause() {
-		cout << endl << "Press any key to continue..." << endl;
+		cout << endl << "Press enter to continue..." << endl;
     	cin.ignore();
     	cin.get();
 	}
@@ -251,16 +251,23 @@ class Diary
 			printAllItems();
 			cout<<endl<<"Enter a number from 1 to "<<numItems<<endl;
 			cin>> code;
-			int i;
-			for(i=code-1;i<numItems-1;i++){
+			if(code < 1 || code > numItems){
+			  cout<<endl<<"Option out of range"<<endl;
+			  menuPause();
+			}
+			else {
+			  int i;
+			  for(i=code-1;i<numItems-1;i++){
 				//I dont know why i can do this, ask Moustafa
 				itemsArr[i]=itemsArr[i+1];
+				//Use the Item.set Method to udate the Id
 				itemsArr[i].setId(i+1);
+			  }
+			  numItems--;
+			  cout<<"The new list is:"<<endl<<endl;
+			  printAllItems();
+			  menuPause();
 			}
-			numItems--;
-			cout<<"The new list is:"<<endl<<endl;
-			printAllItems();
-			menuPause();
 		}
 	}
 
@@ -283,18 +290,24 @@ class Diary
 			printAllItems();
 			cout<<endl<<"Enter a number from 1 to "<<numItems<<endl;
 			cin>> code;
-			cout<<"Please enter the new description for your event"<<endl;
-			readLine(description);
-			cout<<"Please enter the new Day, number from 1 to 31"<<endl;
-			cin>> dd;
-			cout<<"Please enter the new Month, number from 1 to 12"<<endl;
-			cin>> mm;
-			cout<<"Please enter the newYear, number from 2000 to 2099"<<endl;
-			cin>> yyyy;
-			itemsArr[code-1].setItem(code,description,dd,mm,yyyy);
-			cout<<"The new list is:"<<endl<<endl;
-			printAllItems();
-			menuPause();
+			if(code < 1 || code > numItems){
+			  cout<<endl<<"Option out of range"<<endl;
+			  menuPause();
+			}
+			else {			
+			  cout<<"Please enter the new description for your event"<<endl;
+			  readLine(description);
+			  cout<<"Please enter the new Day, number from 1 to 31"<<endl;
+			  cin>> dd;
+			  cout<<"Please enter the new Month, number from 1 to 12"<<endl;
+			  cin>> mm;
+			  cout<<"Please enter the newYear, number from 2000 to 2099"<<endl;
+			  cin>> yyyy;
+			  itemsArr[code-1].setItem(code,description,dd,mm,yyyy);
+			  cout<<"The new list is:"<<endl<<endl;
+			  printAllItems();
+			  menuPause();
+			}
 		}
 	}
     
@@ -352,7 +365,7 @@ int main()
 
 {
       
-      //Declare a GlobalDiary object
+      //Declare a Diary object
       Diary diary;
       //Call the main Diary menu
       diary.mainMenu();
