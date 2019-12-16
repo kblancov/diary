@@ -1,6 +1,8 @@
+ 
 #include<iostream>
 #include<string>
 #include<stdlib.h>
+#include <time.h>       /* time_t, struct tm, time, localtime */
 using namespace std;
 
 //Date class
@@ -112,6 +114,7 @@ class Item
 	//Private data fields
 	private:
 	    int id;
+		Date addedDate;
 	    string itemDescription;
 	    Date itemDate;
 
@@ -131,6 +134,15 @@ class Item
 	    id=code;
       	itemDescription = description;
 		itemDate.setDate(dd, mm, yyyy);
+		
+		time_t rawtime;
+  		struct tm * timeinfo;
+  		time (&rawtime);
+  		timeinfo = localtime (&rawtime);				
+		int added_dd=timeinfo->tm_mday;
+	    int added_mm=timeinfo->tm_mon+1;
+	    int added_yyyy=timeinfo->tm_year+1900;
+		addedDate.setDate(added_dd,added_mm,added_yyyy);
 	}
 
 	//Sets Item data
@@ -139,6 +151,15 @@ class Item
       	id=code;
       	itemDescription = description;
 	    itemDate.setDate(dd, mm, yyyy);
+
+		time_t rawtime;
+  		struct tm * timeinfo;
+  		time (&rawtime);
+  		timeinfo = localtime (&rawtime);				
+		int added_dd=timeinfo->tm_mday;
+	    int added_mm=timeinfo->tm_mon+1;
+	    int added_yyyy=timeinfo->tm_year+1900;
+		addedDate.setDate(added_dd,added_mm,added_yyyy);
 	}
 
 	//Sets Item id
@@ -156,9 +177,12 @@ class Item
 	//Prints Item Data
 	void printItem()
 	{
-	    cout << "- Item " << id << ": | ";
+	    cout << "- Item " << id << ": ";
+		cout << " | Added on: ";
+		addedDate.printDate();
+		cout << " | Date: ";
 		itemDate.printDate();
-	    cout << " | " << itemDescription << " | " <<endl;
+	    cout << " | Description: " << itemDescription << " | " <<endl;
 	}
 
 	//Destructor
@@ -192,7 +216,7 @@ class Diary
 	
 	// Pause execution waiting for a key, provided by Dr. Mustafa Bozkurt
 	void menuPause() {
-		cout << endl << "Press any key to continue..." << endl;
+		cout << endl << "Press enter to continue..." << endl;
     	cin.ignore();
     	cin.get();
 	}
@@ -251,16 +275,23 @@ class Diary
 			printAllItems();
 			cout<<endl<<"Enter a number from 1 to "<<numItems<<endl;
 			cin>> code;
-			int i;
-			for(i=code-1;i<numItems-1;i++){
+			if(code < 1 || code > numItems){
+			  cout<<endl<<"Option out of range"<<endl;
+			  menuPause();
+			}
+			else {
+			  int i;
+			  for(i=code-1;i<numItems-1;i++){
 				//I dont know why i can do this, ask Moustafa
 				itemsArr[i]=itemsArr[i+1];
+				//Use the Item.set Method to udate the Id
 				itemsArr[i].setId(i+1);
+			  }
+			  numItems--;
+			  cout<<"The new list is:"<<endl<<endl;
+			  printAllItems();
+			  menuPause();
 			}
-			numItems--;
-			cout<<"The new list is:"<<endl<<endl;
-			printAllItems();
-			menuPause();
 		}
 	}
 
@@ -283,18 +314,24 @@ class Diary
 			printAllItems();
 			cout<<endl<<"Enter a number from 1 to "<<numItems<<endl;
 			cin>> code;
-			cout<<"Please enter the new description for your event"<<endl;
-			readLine(description);
-			cout<<"Please enter the new Day, number from 1 to 31"<<endl;
-			cin>> dd;
-			cout<<"Please enter the new Month, number from 1 to 12"<<endl;
-			cin>> mm;
-			cout<<"Please enter the newYear, number from 2000 to 2099"<<endl;
-			cin>> yyyy;
-			itemsArr[code-1].setItem(code,description,dd,mm,yyyy);
-			cout<<"The new list is:"<<endl<<endl;
-			printAllItems();
-			menuPause();
+			if(code < 1 || code > numItems){
+			  cout<<endl<<"Option out of range"<<endl;
+			  menuPause();
+			}
+			else {			
+			  cout<<"Please enter the new description for your event"<<endl;
+			  readLine(description);
+			  cout<<"Please enter the new Day, number from 1 to 31"<<endl;
+			  cin>> dd;
+			  cout<<"Please enter the new Month, number from 1 to 12"<<endl;
+			  cin>> mm;
+			  cout<<"Please enter the newYear, number from 2000 to 2099"<<endl;
+			  cin>> yyyy;
+			  itemsArr[code-1].setItem(code,description,dd,mm,yyyy);
+			  cout<<"The new list is:"<<endl<<endl;
+			  printAllItems();
+			  menuPause();
+			}
 		}
 	}
     
@@ -327,6 +364,19 @@ class Diary
                 editItem();
             } else if (option==4){
                 cout<<"Option 4. Menu: "<<endl;
+
+				time_t rawtime;
+  				struct tm * timeinfo;
+  				time (&rawtime);
+  				timeinfo = localtime (&rawtime);				
+				int dd=timeinfo->tm_mday;
+	    		int mm=timeinfo->tm_mon+1;
+	    		int yyyy=timeinfo->tm_year+1900;
+				Date current(dd,mm,yyyy);
+				current.printDate();
+				 menuPause();
+
+
             } else if (option==5){
                 cout<<"Option 5. Menu: "<<endl;
             } else if (option==6){
@@ -352,7 +402,7 @@ int main()
 
 {
       
-      //Declare a GlobalDiary object
+      //Declare a Diary object
       Diary diary;
       //Call the main Diary menu
       diary.mainMenu();
