@@ -3,7 +3,7 @@
 * Program      :  Financial Computing MSc at QMUL, Promo 2019/2019  
 * Project      :  Coursework, INTRO OBJECT-ORIENTED PROGRAMMING - 2019/20                                           
 * License      :  Apache  Ver 2.0, www.apache.org/licenses/LICENSE-2.0           
-* Description  :  Basic solution for the Diary Coursework
+* Description  :  Basic solution for the Diary Coursework with files
 *                                                                             
 *                                                                             
 * Other files  :  none
@@ -14,8 +14,8 @@
 
 #include<iostream>
 #include<string>
-#include<stdlib.h>
-#include <time.h>       /* time_t, struct tm, time, localtime */
+#include <fstream>
+#include <time.h>       
 using namespace std;
 
 //Date class
@@ -187,7 +187,7 @@ class Item
       	code=id;
 	}
 
-	//Prints Item Data
+	//Prints Item Data to the terminal
 	void printItem()
 	{
 	    cout << "- Item " << id << ", Added on ";
@@ -196,6 +196,30 @@ class Item
 		cout << " | Date: ";
 		itemDate.printDate();
 	    cout << " | "<<endl;
+	}
+
+	//Saves Item Data to a given file
+	void saveItem(string fileName)
+	{
+		int day;
+        int month;
+	    int year;
+
+		ofstream myStream(fileName, ios::app);
+		if (myStream.is_open()) {
+			myStream << "item" << endl;
+			myStream << id << endl;
+			addedDate.getDate(day, month, year);
+			myStream << day << endl;
+			myStream << month << endl;
+			myStream << year << endl;
+			myStream << itemDescription << endl;
+			itemDate.getDate(day, month, year);
+			myStream << day << endl;
+			myStream << month << endl;
+			myStream << year << endl;
+		}
+		myStream.close();
 	}
 
 	//Destructor
@@ -347,7 +371,38 @@ class Diary
 			}
 		}
 	}
+
+	//Print All Items in the Diary
+	int saveDiary (){
+		string fileName="diary.txt";
+		int option = 0;
+		clearConsole();
+		cout<<"*****************************************************************"<<endl;
+		cout<< "			Save Diary Option"<<endl<<endl;
+		cout<<"The file "<<fileName <<" will be overwritten with this Diary data"<<endl;
+		cout<<"Are you sure? "<<endl<<endl;
+		cout<<"Enter 1 to confirm, or 0 to return to the main menu."<<endl;
+		cin>>option;
+		
+		if (option == 1){
+			ofstream myStream(fileName);
+			if (myStream.is_open()) {
+				myStream << "Diary" << endl;
+			}
+			myStream.close();
+			int i;
+			for (i=0;i<numItems;i++){
+				//here here
+				itemsArr[i].saveItem(fileName);
+			}
+			cout<<endl<<"Diary saved in "<<fileName <<endl;
+			menuPause();
+			return 1;
+		}
+		return 0;
+	} 
     
+	//Main menu of the Diary Class
     void mainMenu(){        
         
         int option=9;
@@ -363,6 +418,8 @@ class Diary
             cout<< "2. Remove Item"<<endl;
             cout<< "3. Edit Item"<<endl;
             cout<< "4. Print all Items"<<endl;
+			cout<< "5. Load Diary from file"<<endl;
+			cout<< "6. Save Diary to file"<<endl;
             cout<< "0. To exit the program"<<endl;
             cout<<"*****************************************************************"<<endl;
             cout<<"Please enter the option:"<<endl;
@@ -380,6 +437,10 @@ class Diary
                 printAllItems ();
 				cout<<endl<<"Going back to previous menu."<<endl;
 				menuPause();
+			} else if (option==5){
+                saveDiary ();
+            } else if (option==6){
+                saveDiary ();
             } else if (option==0){
                 cout<<endl<<"Thank you for using The Diary App, have a nice day. "<<endl<<endl;
             } else {
