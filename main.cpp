@@ -1,5 +1,16 @@
-
-
+/**************************************************************************                                    
+* Type         :  C++ program
+* Program      :  Financial Computing MSc at QMUL, Promo 2019/2019  
+* Project      :  Coursework, INTRO OBJECT-ORIENTED PROGRAMMING - 2019/20                                           
+* License      :  Apache  Ver 2.0, www.apache.org/licenses/LICENSE-2.0           
+* Description  :  Basic solution for the Diary Coursework
+*                                                                             
+*                                                                             
+* Other files  :  none
+* Last Review  :  11-Dic-2019                                                  
+* Author       :  Camilo BLANCO                                                 
+* Mail         :  camilo.blanco@arcelec.com                                               
+**************************************************************************/
 
 #include<iostream>
 #include<string>
@@ -179,12 +190,12 @@ class Item
 	//Prints Item Data
 	void printItem()
 	{
-	    cout << "- Item " << id << ": ";
-		cout << " | Added on: ";
+	    cout << "- Item " << id << ", Added on ";
 		addedDate.printDate();
+		cout << " | Description: " << itemDescription;
 		cout << " | Date: ";
 		itemDate.printDate();
-	    cout << " | Description: " << itemDescription << " | " <<endl;
+	    cout << " | "<<endl;
 	}
 
 	//Destructor
@@ -247,7 +258,7 @@ class Diary
 		clearConsole();
 		cout<<"*****************************************************************"<<endl;
 		cout<< "			Add Item Option"<<endl<<endl;
-		cout<<"Please enter description of your new event"<<endl;
+		cout<<"Please enter description of your new  diary item"<<endl;
 		readLine(description);
 		cout<<"Please enter Day, number from 1 to 31"<<endl;
 		cin>> dd;
@@ -273,9 +284,9 @@ class Diary
 			cout<<"There are no items in the App"<<endl;
 			menuPause();
 		} else {
-			cout<<"Enter the item number to be removed from this list :"<<endl<<endl;
+			cout<<"The current item list is :"<<endl<<endl;
 			printAllItems();
-			cout<<endl<<"Enter a number from 1 to "<<numItems<<endl;
+			cout<<endl<<"Enter a Item number from 1 to "<<numItems<<" to be removed"<<endl;
 			cin>> code;
 			if(code < 1 || code > numItems){
 			  cout<<endl<<"Option out of range"<<endl;
@@ -321,7 +332,7 @@ class Diary
 			  menuPause();
 			}
 			else {			
-			  cout<<"Please enter the new description for your event"<<endl;
+			  cout<<"Please enter the new description for your diary item"<<endl;
 			  readLine(description);
 			  cout<<"Please enter the new Day, number from 1 to 31"<<endl;
 			  cin>> dd;
@@ -340,20 +351,18 @@ class Diary
     void mainMenu(){        
         
         int option=9;
-        char temp='a';
-        string userInput="";
         
         while (option!=0){
         	clearConsole();
             cout<<"*****************************************************************"<<endl;
-            cout<< "			Diary Main Menu"<<endl<<endl;
+            cout<< "			The Diary App Ver 1.0"<<endl;
+			cout<<"*****************************************************************"<<endl;
+            cout<< "			       Main Menu"<<endl<<endl;
             cout<< "Select one of the next options by entering the option number:"<<endl<<endl;
             cout<< "1. Add Item"<<endl;
             cout<< "2. Remove Item"<<endl;
             cout<< "3. Edit Item"<<endl;
-            cout<< "4. Save to File"<<endl;
-            cout<< "5. Open from File"<<endl;
-            cout<< "6. Print all Items"<<endl;
+            cout<< "4. Print all Items"<<endl;
             cout<< "0. To exit the program"<<endl;
             cout<<"*****************************************************************"<<endl;
             cout<<"Please enter the option:"<<endl;
@@ -365,13 +374,9 @@ class Diary
             } else if (option==3){
                 editItem();
             } else if (option==4){
-                cout<<"Option 4. Menu: "<<endl;
-            } else if (option==5){
-                cout<<"Option 5. Menu: "<<endl;
-            } else if (option==6){
 				clearConsole();
 				cout<<"*****************************************************************"<<endl;
-				cout<< "			Print all Items"<<endl<<endl;
+				cout<< "			All Diary Items"<<endl<<endl;
                 printAllItems ();
 				cout<<endl<<"Going back to previous menu."<<endl;
 				menuPause();
