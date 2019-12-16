@@ -364,19 +364,6 @@ class Diary
                 editItem();
             } else if (option==4){
                 cout<<"Option 4. Menu: "<<endl;
-
-				time_t rawtime;
-  				struct tm * timeinfo;
-  				time (&rawtime);
-  				timeinfo = localtime (&rawtime);				
-				int dd=timeinfo->tm_mday;
-	    		int mm=timeinfo->tm_mon+1;
-	    		int yyyy=timeinfo->tm_year+1900;
-				Date current(dd,mm,yyyy);
-				current.printDate();
-				 menuPause();
-
-
             } else if (option==5){
                 cout<<"Option 5. Menu: "<<endl;
             } else if (option==6){
