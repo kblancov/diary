@@ -202,6 +202,16 @@ class Item
 	//Virtual function to print the data of the Item
 	virtual void printItem()=0;
 
+	//compares the object date data with the parameters
+	//Returns 1 if it is the same, else 0. 
+	int compareAddedDate(int dd, int mm, int yy)
+	{
+	    if(addedDate.compareDate(dd, mm, yy)==1)
+			return 1;
+		return 0;
+	}
+
+
 	//Destructor
 	~Item ()
 	{
@@ -317,15 +327,6 @@ class ToDo : public Item
 		myStream.close();
 	}
 
-	//compares the object date data with the parameters
-	//Returns 1 if it is the same, else 0. 
-	int compareAddedDate(int dd, int mm, int yy)
-	{
-	    if(addedDate.compareDate(dd, mm, yy)==1)
-			return 1;
-		return 0;
-	}
-
 	//Destructor
 	~ToDo ()
 	{
@@ -333,6 +334,134 @@ class ToDo : public Item
 	}
 };
 
+//Reminder class
+class Reminder : public Item
+{
+	//Private data fields
+	private:
+	string remType;
+	Date targetDate;
+	
+
+	//Public member functions
+	public:
+
+	//default constructor
+	Reminder () : Item ()
+	{
+		this->remType="";
+	}
+
+	//Parametrized constructor
+	Reminder (int code, string description, int dd, int mm, int yyyy, int type) :
+			Item (code,description)
+	{
+		this->targetDate.setDate(dd, mm, yyyy);
+		//set the reminder type acording to the options 
+		if (type==1)
+			this->remType="Deadline";
+		else if (type==2)
+			this->remType="Birthday";
+		else if (type==3)
+			this->remType="Aniversary";
+		else if (type==4)
+			this->remType="Travel";
+		else if (type==5)
+			this->remType="Public Holiday";
+		else
+			this->remType="";
+	}
+
+	//Sets Reminder data
+	void setReminder(int code, string description, int dd, int mm, int yyyy, int type)
+	{
+      	this->id=code;
+      	this->itemDescription = description;
+	    this->targetDate.setDate(dd, mm, yyyy);
+		//set the reminder type acording to the options 
+		if (type==1)
+			this->remType="Deadline";
+		else if (type==2)
+			this->remType="Birthday";
+		else if (type==3)
+			this->remType="Aniversary";
+		else if (type==4)
+			this->remType="Travel";
+		else if (type==5)
+			this->remType="Public Holiday";
+		else
+			this->remType="";
+	}
+
+	//Loads the Reminder Data from a given open ofstream
+	void loadReminder(ifstream &myStream, int code)
+	{
+      	int day;
+        int month;
+	    int year;
+
+		if (myStream.is_open()) {
+			myStream >> id;//skip this line
+			id=code;//the id is set bt a parameter
+			myStream >> day;
+			myStream >> month;
+			myStream >> year;
+			addedDate.setDate(day,month,year);
+			myStream.ignore();
+			getline(myStream,itemDescription);
+			myStream >> day;
+			myStream >> month;
+			myStream >> year;
+			targetDate.setDate(day,month,year);
+			myStream.ignore();
+			getline(myStream,remType);
+		}
+		  
+	}
+
+	//Prints Reminder Data to the terminal
+	void printItem()
+	{
+	    cout << "- Reminder " << id << ", added on ";
+		addedDate.printDate();
+		cout << " | Target Date: ";
+		targetDate.printDate();
+		cout << " | Type: " << remType;
+		cout << " | Description: " << itemDescription;
+	    cout << " | "<<endl;
+	}
+
+	//Saves Reminder Data to a given file
+	void saveReminder(string fileName)
+	{
+		int day;
+        int month;
+	    int year;
+
+		ofstream myStream(fileName, ios::app);
+		if (myStream.is_open()) {
+			myStream << "Reminder" << endl;
+			myStream << id << endl;
+			addedDate.getDate(day, month, year);
+			myStream << day << endl;
+			myStream << month << endl;
+			myStream << year << endl;
+			myStream << itemDescription << endl;
+			targetDate.getDate(day, month, year);
+			myStream << day << endl;
+			myStream << month << endl;
+			myStream << year << endl;
+			myStream << remType << endl;
+		}
+		myStream.close();
+	}
+
+	//Destructor
+	~Reminder ()
+	{
+
+	}
+};
 
 
 //Diary class
@@ -340,21 +469,41 @@ class Diary
 {
 	//Private data fields
     private:
-	//Maximun number of ToDos
-	int maxToDo;
-    //Counter for the current number of ToDos
+
+	//Maximun number of Items per type
+	int maxToDos;
+	int maxReminders;
+
+    //Counter for the current number of Items per type
     int numToDo;
-    //Pointer to a dynamic ToDu array
+	int numReminders;
+
+    //Pointer to a dynamics arrays per type
     ToDo* toDosArr;
+	Reminder* remindersArr;
 
 	//Public member functions
     public:
+
+/**************************************************************************                                    
+* Class        	:  	Diary
+* Function Group:  	General
+* Socope		: 	Member functions for general propouses  
+* Numel      	:   4 Functions.                                                                                        
+**************************************************************************/
+
     //constructor
     Diary (){
-		this->maxToDo=100;
+
+		//Initialize parameters
+		this->maxToDos=300;
         this->numToDo=0;
-		//Alocate the memory for maxTodo ToDos in the Heap
-		this->toDosArr= new ToDo[this->maxToDo];
+		this->maxReminders=200;
+		this->numReminders=0;
+
+		//Alocate the memory arrays per type in the Heap
+		this->toDosArr= new ToDo[this->maxToDos];
+		this->remindersArr= new Reminder[this->maxReminders];
     }
 
 	// Clear the whole console, provided by Dr. Mustafa Bozkurt
@@ -374,6 +523,13 @@ class Diary
     	cin.ignore();
 		getline(cin,description);
 	}
+
+/**************************************************************************                                    
+* Class        	:  	Diary
+* Function Group:  	ToDo Array 
+* Scope			: 	Management of all functionalities related to ToDos
+* Numel      	:   5 Functions.                                                                                        
+**************************************************************************/
 
 	//Print All ToDo in the Diary
 	void printAllToDos (){
@@ -512,6 +668,150 @@ class Diary
 		}
 	}
 
+/**************************************************************************                                    
+* Class        	:  	Diary
+* Function Group:  	Reminders Array 
+* Scope			: 	Management of all functions related to Reminders
+* Numel      	:   4 Functions.                                                                                        
+**************************************************************************/
+
+	//Print All Reminders in the Diary
+	void printAllReminders (){
+	    int i;
+	    for (i=0;i<numReminders;i++){
+	        remindersArr[i].printItem();
+	    }
+	} 
+
+	//Member function for adding an Reminders
+	void addReminder()
+	{	
+		clearConsole();
+	    string description="";
+	    int dd=0;
+	    int mm=0;
+	    int yyyy=0;
+		int type=0;
+		cout<<"*****************************************************************"<<endl;
+		cout<< "			Add Reminder Option"<<endl<<endl;
+		cout<<"Please enter description of your new Reminder"<<endl;
+		cin.ignore();
+		getline(cin,description);
+		cout<<"Please enter the target Day, number from 1 to 31"<<endl;
+		cin>> dd;
+		cout<<"Please enter the target Month, number from 1 to 12"<<endl;
+		cin>> mm;
+		cout<<"Please enter the target Year, number from 2000 to 2099"<<endl;
+		cin>> yyyy;
+		cout<<endl<<"There are 5 diferents types of Reminders."<<endl;
+ 		cout<<"Please, select one option by entering the option number:"<<endl<<endl;
+        cout<< "1. Deadline"<<endl;
+        cout<< "2. Birthday"<<endl;
+        cout<< "3. Aniversary"<<endl;
+        cout<< "4. Travel"<<endl;
+		cout<< "5. Public Holiday"<<endl<<endl;
+        cout<<"Please enter the option:"<<endl;
+		cin>> type;
+		numReminders++;
+		remindersArr[numReminders-1].setReminder(numReminders,description,dd,mm,yyyy,type);
+		cout<<endl<<"The Reminder:"<<numReminders<<" was added to your Diary:"<<endl;
+		remindersArr[numReminders-1].printItem();
+		menuPause();
+	}
+
+	//Member function for removing an Reminder
+	void removeReminder()
+	{
+	    int code;
+		clearConsole();
+		cout<<"*****************************************************************"<<endl;
+		cout<< "			Remove Reminder Option"<<endl<<endl;
+		if(numReminders<1){
+			cout<<"There are no Reminders in the App"<<endl;
+			menuPause();
+		} else {
+			cout<<"The current Reminders list is :"<<endl<<endl;
+			printAllReminders();
+			cout<<endl<<"Enter a Reminder number from 1 to "<<numReminders<<" to be removed"<<endl;
+			cin>> code;
+			if(code < 1 || code > numReminders){
+			  cout<<endl<<"Option out of range"<<endl;
+			  menuPause();
+			}
+			else {
+			  int i;
+			  for(i=code-1;i<numReminders-1;i++){
+				//Use the default shallow asign function
+				remindersArr[i]=remindersArr[i+1];
+				//Use the Item.setId Method to update the Id
+				remindersArr[i].setId(i+1);
+			  }
+			  numReminders--;
+			  cout<<"The new Reminders list is:"<<endl<<endl;
+			  printAllReminders();
+			  menuPause();
+			}
+		}
+	}
+
+	//Member function for edting a Reminder
+	void editReminder()
+	{
+	    int dd;
+	    int mm;
+	    int yyyy;
+		string description;
+		int code;
+		int type;
+		clearConsole();
+		cout<<"*****************************************************************"<<endl;
+		cout<< "			Edit Reminders Option"<<endl<<endl;
+		if(numReminders<1){
+			cout<<"There are no Reminders in the App"<<endl;
+			menuPause();
+		} else {
+			cout<<"Enter the Reminder number to be edited from this list :"<<endl<<endl;
+			printAllReminders();
+			cout<<endl<<"Enter a number from 1 to "<<numReminders<<endl;
+			cin>> code;
+			if(code < 1 || code > numReminders){
+				cout<<endl<<"Option out of range"<<endl;
+				menuPause();
+			}
+			else {			
+				cout<<"Please enter the new description for your Reminder"<<endl;
+				cin.ignore();
+				getline(cin,description);
+				cout<<"Please enter the new target Day, number from 1 to 31"<<endl;
+				cin>> dd;
+				cout<<"Please enter the new target Month, number from 1 to 12"<<endl;
+				cin>> mm;
+				cout<<"Please enter the new target Year, number from 2000 to 2099"<<endl;
+				cin>> yyyy;
+				cout<<endl<<"There are 5 diferents types of Reminders."<<endl;
+				cout<<"Please, select the new type by entering the option number:"<<endl<<endl;
+				cout<< "1. Deadline"<<endl;
+				cout<< "2. Birthday"<<endl;
+				cout<< "3. Aniversary"<<endl;
+				cout<< "4. Travel"<<endl;
+				cout<< "5. Public Holiday"<<endl<<endl;
+				cout<<"Please enter the option:"<<endl;
+				cin>> type;
+				remindersArr[code-1].setReminder(code,description,dd,mm,yyyy,type);
+				cout<<"The new list of Reminders is:"<<endl<<endl;
+				printAllReminders();
+				menuPause();
+			}
+		}
+	}
+
+/**************************************************************************                                    
+* Class        	:  	Diary
+* Function Group:  	Diary Files
+* Scope			: 	Management of all functionalities related to Files
+* Numel      	:   2 Functions.                                                                                        
+**************************************************************************/
+
 	//Saves Diary Objects to the diary.txt file
 	int saveDiary (){
 		string fileName="diary.txt";
@@ -523,9 +823,13 @@ class Diary
 		}
 		myStream.close();
 		
-		//Then, loop over ToDosArr and append each ToDo data to the file diary.txt
+		//Loop over ToDosArr and append each ToDo data to the file diary.txt
 		for (int i=0;i<numToDo;i++){
 			toDosArr[i].saveToDo(fileName);
+		}
+		//Loop over remindersArr and append each Reminder data to the file diary.txt
+		for (int i=0;i<numReminders;i++){
+			remindersArr[i].saveReminder(fileName);
 		}
 		cout<<endl<<"Diary saved in "<<fileName <<endl;
 		return 1;
@@ -544,11 +848,23 @@ class Diary
 						toDosArr[numToDo].loadToDo(myStream,numToDo+1);
 						numToDo++;	
 				}
+				//if the line is a Reminder
+				if((line.compare("Reminder")) == 0){
+						remindersArr[numReminders].loadReminder(myStream,numReminders+1);
+						numReminders++;	
+				}
 			}
 			myStream.close();
 		}
 		return 1;
 	} 
+
+/**************************************************************************                                    
+* Class        	:  	Diary
+* Function Group:  	Searchs and Reports
+* Scope			: 	Management of Searchs and Reports functionalities
+* Numel      	:   1 Function.                                                                                        
+**************************************************************************/
 
 	//Reads a Date from the console and print coincidences
 
@@ -584,18 +900,22 @@ class Diary
 		}
 	}
  
+/**************************************************************************                                    
+* Class        	:  	Diary
+* Function Group:  	Menu and Sub Menus
+* Scope			: 	Management of Main Menu and Sub Menus
+* Numel      	:   4 Functions.                                                                                        
+**************************************************************************/
 	//Menu ToDo of the Diary Class
     void ToDoMenu(){        
-        
         int option=9;
         while (option!=0){
         	clearConsole();
-			
             cout<<"*****************************************************************"<<endl;
             cout<< "			The Diary App Ver 3.0"<<endl;
 			cout<<"*****************************************************************"<<endl;
-            cout<< "			       Menu ToDos"<<endl<<endl;
-            cout<< "Select one of the next options by entering the option number:"<<endl<<endl;
+            cout<< "			       ToDos Menu "<<endl<<endl;
+            cout<< "Select one option by entering the option number:"<<endl<<endl;
             cout<< "1. Add ToDo"<<endl;
             cout<< "2. Remove ToDo"<<endl;
             cout<< "3. Edit ToDo"<<endl;
@@ -625,10 +945,46 @@ class Diary
             } else {
                 cout<<"Invalid Option"<<endl;
             }
-            
         }
-        
+    }
 
+//Menu Reminders of the Diary Class
+    void RemindersMenu(){        
+        int option=9;
+        while (option!=0){
+        	clearConsole();
+            cout<<"*****************************************************************"<<endl;
+            cout<< "			The Diary App Ver 3.0"<<endl;
+			cout<<"*****************************************************************"<<endl;
+            cout<< "			       Reminders Menu"<<endl<<endl;
+            cout<< "Select one option by entering the option number:"<<endl<<endl;
+            cout<< "1. Add Reminder"<<endl;
+            cout<< "2. Delete Reminder"<<endl;
+            cout<< "3. Edit Reminder"<<endl;
+			cout<< "4. Print all Reminders"<<endl;
+            cout<< "0. Back to Main Menu"<<endl;
+            cout<<"*****************************************************************"<<endl;
+            cout<<"Please enter the option:"<<endl;
+            cin>> option;
+            if (option==1){
+                addReminder();
+            } else if (option==2){
+                removeReminder();
+            } else if (option==3){
+                editReminder();
+            } else if (option==4){
+				clearConsole();
+				cout<<"*****************************************************************"<<endl;
+				cout<< "			All Reminders"<<endl<<endl;
+                printAllReminders ();
+				cout<<endl<<"Going back to previous menu."<<endl;
+				menuPause();                
+            } else if (option==0){
+                cout<<endl<<"Going Back to Main Menu "<<endl;
+            } else {
+                cout<<"Invalid Option"<<endl;
+            }
+        }
     }
 
 	//Main menu of the Diary Class
@@ -643,10 +999,10 @@ class Diary
             cout<< "			The Diary App Ver 3.0"<<endl;
 			cout<<"*****************************************************************"<<endl;
             cout<< "			       Main Menu"<<endl<<endl;
-            cout<< "Select one of the next options by entering the option number:"<<endl<<endl;
+            cout<< "Select one option by entering the option number:"<<endl<<endl;
             cout<< "1. Manage ToDos"<<endl;
-            cout<< "2. "<<endl;
-            cout<< "3. "<<endl;
+            cout<< "2. Manage Reminders"<<endl;
+            cout<< "3. Manage Events"<<endl;
             cout<< "4. Print all Items"<<endl;
 			cout<< "5. Search by Added Date"<<endl;
             cout<< "0. To exit the program"<<endl;
@@ -656,7 +1012,7 @@ class Diary
             if (option==1){
                 ToDoMenu();
             } else if (option==2){
-                
+                RemindersMenu();
             } else if (option==3){
                 
             } else if (option==4){
@@ -665,9 +1021,11 @@ class Diary
 				cout<< "			All Diary Items"<<endl<<endl;
                 cout<<endl<<"ToDos:"<<endl<<endl;
 				printAllToDos ();
+				cout<<endl<<"Reminders:"<<endl<<endl;
+				printAllReminders ();
 				cout<<endl<<"Going back to previous menu."<<endl;
 				menuPause();                
-			} else if (option==7){
+			} else if (option==5){
                 searchByAddedDate ();
             } else if (option==0){
 			 	saveDiary ();
@@ -681,10 +1039,18 @@ class Diary
 
     }
 
+/**************************************************************************                                    
+* Class        	:  	Diary
+* Function Group:  	Destructors
+* Scope			: 	Management of Destructors
+* Numel      	:   1 Function.                                                                                        
+**************************************************************************/
+
 	//Destructor
     ~Diary (){
-		//Free the memory for ToDos Array from the Heap
+		//Free the memory of all Arrays in the Heap
 		delete[] this->toDosArr;
+		delete[] this->remindersArr;
     }
 
 
