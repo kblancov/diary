@@ -333,21 +333,28 @@ class ToDo : public Item
 	}
 };
 
+
+
 //Diary class
 class Diary
 {
 	//Private data fields
     private:
+	//Maximun number of ToDos
+	int maxToDo;
     //Counter for the current number of ToDos
     int numToDo;
-    //Array of ToDo
-    ToDo toDosArr[100];
-    
+    //Pointer to a dynamic ToDu array
+    ToDo* toDosArr;
+
 	//Public member functions
     public:
     //constructor
     Diary (){
-        numToDo=0;
+		this->maxToDo=100;
+        this->numToDo=0;
+		//Alocate the memory for maxTodo ToDos in the Heap
+		this->toDosArr= new ToDo[this->maxToDo];
     }
 
 	// Clear the whole console, provided by Dr. Mustafa Bozkurt
@@ -673,6 +680,14 @@ class Diary
         
 
     }
+
+	//Destructor
+    ~Diary (){
+		//Free the memory for ToDos Array from the Heap
+		delete[] this->toDosArr;
+    }
+
+
 };
 
 int main()

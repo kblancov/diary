@@ -14,11 +14,11 @@ ToDo
 16
 12
 2019
-Segunda super Tarea
+Segunda Tarea
 20
 12
 2019
-Complete
+Incomplete
 ToDo
 3
 17
@@ -34,8 +34,8 @@ ToDo
 17
 12
 2019
-Hello Moto
-25
-12
-2019
+Cuarta Tarea
+8
+1
+2020
 Incomplete
