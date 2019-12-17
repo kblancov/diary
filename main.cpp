@@ -133,6 +133,90 @@ class Date
 	}
 };
 
+//Time class hh:mm 24 hours format
+class Time
+{
+	//Private data fields
+	private:
+	    int hour;
+	    int minute;
+
+	//Publich member functions
+	public:
+	
+	//Default constructor
+	Time()
+	{
+	    hour = 0;
+	    minute = 0;
+	}
+
+	//Parametrized constructor
+	Time(int hh, int mm)
+	{
+	    if(hh >= 0 && hh <= 23){
+			hour = hh;
+		}
+	    else{
+			hour = 0;
+			cout<<endl<< "Warning: the entered hour is not valid"<<endl;
+			cout<< "Hour value set to: "<<hour<<endl;
+		  }
+        if(mm >= 0 && mm <= 59){
+		    minute = mm;
+		}
+	    else{
+			minute = 0;
+			cout<<endl<< "Warning: the entered minute is not valid"<<endl;
+			cout<< "Minute value set to: "<<minute<<endl;
+		}
+
+	}
+
+	//sets a valid time
+	void setTime(int hh, int mm)
+	{
+	    if(hh >= 0 && hh <= 23){
+			hour = hh;
+		}
+	    else{
+			hour = 0;
+			cout<<endl<< "Warning: the entered hour is not valid"<<endl;
+			cout<< "Hour value set to: "<<hour<<endl;
+		  }
+        if(mm >= 0 && mm <= 59){
+		    minute = mm;
+		}
+	    else{
+			minute = 0;
+			cout<<endl<< "Warning: the entered minute is not valid"<<endl;
+			cout<< "Minute value set to: "<<minute<<endl;
+		}
+	}
+
+	//returns the hour and the minute
+	void getTime(int &hh, int &mm)
+	{
+	    hh = hour;
+        mm = minute;
+	}
+
+	//displays the hour and minute to the screen
+	void printTime()
+	{
+	    if(hour < 10)
+		    cout << "0";
+	    cout << hour << ":";
+        if(minute < 10)
+		    cout << "0";
+	    cout << minute;
+	}
+	//Destructor
+	~Time()
+	{
+	}
+};
+
 //Item abstract class
 class Item
 {
@@ -339,8 +423,10 @@ class Reminder : public Item
 {
 	//Private data fields
 	private:
+	//String to store the Type of Reminder
 	string remType;
 	Date targetDate;
+	Time targetTime;
 	
 
 	//Public member functions
@@ -353,10 +439,11 @@ class Reminder : public Item
 	}
 
 	//Parametrized constructor
-	Reminder (int code, string description, int dd, int mm, int yyyy, int type) :
+	Reminder (int code, string description, int dd, int mm, int yyyy, int type, int hour, int minu) :
 			Item (code,description)
 	{
 		this->targetDate.setDate(dd, mm, yyyy);
+		this->targetTime.setTime(hour,minu);
 		//set the reminder type acording to the options 
 		if (type==1)
 			this->remType="Deadline";
@@ -373,11 +460,12 @@ class Reminder : public Item
 	}
 
 	//Sets Reminder data
-	void setReminder(int code, string description, int dd, int mm, int yyyy, int type)
+	void setReminder(int code, string description, int dd, int mm, int yyyy, int type, int hour, int minu)
 	{
       	this->id=code;
       	this->itemDescription = description;
 	    this->targetDate.setDate(dd, mm, yyyy);
+		this->targetTime.setTime(hour,minu);
 		//set the reminder type acording to the options 
 		if (type==1)
 			this->remType="Deadline";
@@ -399,6 +487,8 @@ class Reminder : public Item
       	int day;
         int month;
 	    int year;
+		int hour;
+		int minu;
 
 		if (myStream.is_open()) {
 			myStream >> id;//skip this line
@@ -415,6 +505,9 @@ class Reminder : public Item
 			targetDate.setDate(day,month,year);
 			myStream.ignore();
 			getline(myStream,remType);
+			myStream >> hour;
+			myStream >> minu;
+			targetTime.setTime(hour,minu);
 		}
 		  
 	}
@@ -426,6 +519,8 @@ class Reminder : public Item
 		addedDate.printDate();
 		cout << " | Target Date: ";
 		targetDate.printDate();
+		cout << " | Target Time: ";
+		targetTime.printTime();
 		cout << " | Type: " << remType;
 		cout << " | Description: " << itemDescription;
 	    cout << " | "<<endl;
@@ -437,6 +532,8 @@ class Reminder : public Item
 		int day;
         int month;
 	    int year;
+		int hour;
+		int minu;
 
 		ofstream myStream(fileName, ios::app);
 		if (myStream.is_open()) {
@@ -452,6 +549,9 @@ class Reminder : public Item
 			myStream << month << endl;
 			myStream << year << endl;
 			myStream << remType << endl;
+			targetTime.getTime(hour,minu);
+			myStream << hour << endl;
+			myStream << minu << endl;
 		}
 		myStream.close();
 	}
@@ -551,12 +651,12 @@ class Diary
 		cout<< "			Add ToDo Option"<<endl<<endl;
 		cout<<"Please enter description of your new  diary ToDo"<<endl;
 		readLine(description);
-		cout<<"Please enter the due Day, number from 1 to 31"<<endl;
-		cin>> dd;
-		cout<<"Please enter the due Month, number from 1 to 12"<<endl;
-		cin>> mm;
 		cout<<"Please enter the due Year, number from 2000 to 2099"<<endl;
 		cin>> yyyy;
+		cout<<"Please enter the due Month, number from 1 to 12"<<endl;
+		cin>> mm;
+		cout<<"Please enter the due Day, number from 1 to 31"<<endl;
+		cin>> dd;		
 		numToDo++;
 		toDosArr[numToDo-1].setToDo(numToDo,description,dd,mm,yyyy);
 		cout<<endl<<"The ToDo:"<<numToDo<<" was added to your Diary:"<<endl;
@@ -625,12 +725,12 @@ class Diary
 			else {			
 			  cout<<"Please enter the new description for your ToDo"<<endl;
 			  readLine(description);
-			  cout<<"Please enter the new due Day, number from 1 to 31"<<endl;
-			  cin>> dd;
-			  cout<<"Please enter the new due Month, number from 1 to 12"<<endl;
-			  cin>> mm;
 			  cout<<"Please enter the new due Year, number from 2000 to 2099"<<endl;
 			  cin>> yyyy;
+			  cout<<"Please enter the new due Month, number from 1 to 12"<<endl;
+			  cin>> mm;
+			  cout<<"Please enter the new due Day, number from 1 to 31"<<endl;
+			  cin>> dd;
 			  toDosArr[code-1].setToDo(code,description,dd,mm,yyyy);
 			  toDosArr[code-1].uncheckToDo();
 			  cout<<"The new list of ToDos is:"<<endl<<endl;
@@ -692,17 +792,24 @@ class Diary
 	    int mm=0;
 	    int yyyy=0;
 		int type=0;
+		int hour;
+		int minu;
 		cout<<"*****************************************************************"<<endl;
 		cout<< "			Add Reminder Option"<<endl<<endl;
 		cout<<"Please enter description of your new Reminder"<<endl;
 		cin.ignore();
 		getline(cin,description);
-		cout<<"Please enter the target Day, number from 1 to 31"<<endl;
-		cin>> dd;
-		cout<<"Please enter the target Month, number from 1 to 12"<<endl;
-		cin>> mm;
 		cout<<"Please enter the target Year, number from 2000 to 2099"<<endl;
 		cin>> yyyy;
+		cout<<"Please enter the target Month, number from 1 to 12"<<endl;
+		cin>> mm;
+		cout<<"Please enter the target Day, number from 1 to 31"<<endl;
+		cin>> dd;
+		cout<<"Please enter the target  Hour, number from 0 to 23"<<endl;
+		cin>> hour;
+		cout<<"Please enter the target Minute, number from 0 to 59"<<endl;
+		cin>> minu;
+		
 		cout<<endl<<"There are 5 diferents types of Reminders."<<endl;
  		cout<<"Please, select one option by entering the option number:"<<endl<<endl;
         cout<< "1. Deadline"<<endl;
@@ -713,7 +820,7 @@ class Diary
         cout<<"Please enter the option:"<<endl;
 		cin>> type;
 		numReminders++;
-		remindersArr[numReminders-1].setReminder(numReminders,description,dd,mm,yyyy,type);
+		remindersArr[numReminders-1].setReminder(numReminders,description,dd,mm,yyyy,type,hour,minu);
 		cout<<endl<<"The Reminder:"<<numReminders<<" was added to your Diary:"<<endl;
 		remindersArr[numReminders-1].printItem();
 		menuPause();
@@ -763,6 +870,8 @@ class Diary
 		string description;
 		int code;
 		int type;
+		int hour;
+		int minu;
 		clearConsole();
 		cout<<"*****************************************************************"<<endl;
 		cout<< "			Edit Reminders Option"<<endl<<endl;
@@ -782,12 +891,16 @@ class Diary
 				cout<<"Please enter the new description for your Reminder"<<endl;
 				cin.ignore();
 				getline(cin,description);
-				cout<<"Please enter the new target Day, number from 1 to 31"<<endl;
-				cin>> dd;
-				cout<<"Please enter the new target Month, number from 1 to 12"<<endl;
-				cin>> mm;
 				cout<<"Please enter the new target Year, number from 2000 to 2099"<<endl;
 				cin>> yyyy;
+				cout<<"Please enter the new target Month, number from 1 to 12"<<endl;
+				cin>> mm;
+				cout<<"Please enter the new target Day, number from 1 to 31"<<endl;
+				cin>> dd;
+				cout<<"Please enter the new target  Hour, number from 0 to 23"<<endl;
+				cin>> hour;
+				cout<<"Please enter the new target Minute, number from 0 to 59"<<endl;
+				cin>> minu;
 				cout<<endl<<"There are 5 diferents types of Reminders."<<endl;
 				cout<<"Please, select the new type by entering the option number:"<<endl<<endl;
 				cout<< "1. Deadline"<<endl;
@@ -797,7 +910,7 @@ class Diary
 				cout<< "5. Public Holiday"<<endl<<endl;
 				cout<<"Please enter the option:"<<endl;
 				cin>> type;
-				remindersArr[code-1].setReminder(code,description,dd,mm,yyyy,type);
+				remindersArr[code-1].setReminder(code,description,dd,mm,yyyy,type,hour,minu);
 				cout<<"The new list of Reminders is:"<<endl<<endl;
 				printAllReminders();
 				menuPause();
@@ -880,23 +993,32 @@ class Diary
 			cout<<"There are no items in the App"<<endl;
 			menuPause();
 		} else {
-			  cout<<"Please enter the Day, number from 1 to 31"<<endl;
-			  cin>> dd;
-			  cout<<"Please enter the Month, number from 1 to 12"<<endl;
-			  cin>> mm;
-			  cout<<"Please enter the Year, number from 2000 to 2099"<<endl;
-			  cin>> yyyy;
-			  cout<<endl<<"*****************************************************************"<<endl;
-			  cout<<"Search Results:"<<endl<<endl;
-
-			  for (int i=0; i<numToDo; i++){
-					if(toDosArr[i].compareAddedDate(dd,mm,yyyy)==1){
-						toDosArr[i].printItem();
-						results++;
-					}
-			  }
-			  cout<<endl<<results<<" records found for the entered date"<<endl;
-			  menuPause();
+				cout<<"Please enter the Year, number from 2000 to 2099"<<endl;
+				cin>> yyyy;
+				cout<<"Please enter the Month, number from 1 to 12"<<endl;
+				cin>> mm;
+				cout<<"Please enter the Day, number from 1 to 31"<<endl;
+				cin>> dd;
+				clearConsole();
+				cout<<endl<<"*****************************************************************"<<endl;
+				cout<<"Search Results."<<endl<<endl;
+				cout<<"  ToDos :"<<endl<<endl;
+				for (int i=0; i<numToDo; i++){
+						if(toDosArr[i].compareAddedDate(dd,mm,yyyy)==1){
+							toDosArr[i].printItem();
+							results++;
+						}
+				}
+				cout<<endl<<"  Reminders :"<<endl<<endl;
+				for (int i=0; i<numReminders; i++){
+						if(remindersArr[i].compareAddedDate(dd,mm,yyyy)==1){
+							remindersArr[i].printItem();
+							results++;
+						}
+				}
+				cout<<endl<<"  Total Results :"<<endl<<endl;
+				cout<<"-"<<results<<" records found for the entered added date search"<<endl;
+				menuPause();
 		}
 	}
  
@@ -1003,7 +1125,7 @@ class Diary
             cout<< "1. Manage ToDos"<<endl;
             cout<< "2. Manage Reminders"<<endl;
             cout<< "3. Manage Events"<<endl;
-            cout<< "4. Print all Items"<<endl;
+            cout<< "4. Print all Items by Type"<<endl;
 			cout<< "5. Search by Added Date"<<endl;
             cout<< "0. To exit the program"<<endl;
             cout<<"*****************************************************************"<<endl;
@@ -1018,10 +1140,10 @@ class Diary
             } else if (option==4){
 				clearConsole();
 				cout<<"*****************************************************************"<<endl;
-				cout<< "			All Diary Items"<<endl<<endl;
-                cout<<endl<<"ToDos:"<<endl<<endl;
+				cout<< "			All Diary Items by Type"<<endl<<endl;
+                cout<<endl<<"  ToDos :"<<endl<<endl;
 				printAllToDos ();
-				cout<<endl<<"Reminders:"<<endl<<endl;
+				cout<<endl<<"  Reminders :"<<endl<<endl;
 				printAllReminders ();
 				cout<<endl<<"Going back to previous menu."<<endl;
 				menuPause();                
