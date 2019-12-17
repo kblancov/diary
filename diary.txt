@@ -8,6 +8,7 @@ Primera tarea
 20
 12
 2019
+Incomplete
 ToDo
 2
 16
@@ -17,6 +18,7 @@ Segunda super Tarea
 20
 12
 2019
+Complete
 ToDo
 3
 17
@@ -26,6 +28,7 @@ Tercera Tarea
 31
 12
 2019
+Incomplete
 ToDo
 4
 17
@@ -35,3 +38,4 @@ Hello Moto
 25
 12
 2019
+Incomplete

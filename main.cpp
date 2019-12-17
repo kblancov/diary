@@ -215,28 +215,43 @@ class ToDo : public Item
 	//Private data fields
 	private:
 	Date dueDate;
-
+	string status;
 	//Public member functions
 	public:
 
 	//default constructor
 	ToDo () : Item ()
 	{
+		this->status="Incomplete";
+		//this->status="Complete";
 	}
 
 	//Parametrized constructor
 	ToDo (int code, string description, int dd, int mm, int yyyy) :
 			Item (code,description)
 	{
-		dueDate.setDate(dd, mm, yyyy);
+		//this->id=code;
+		//this->itemDescription=description;
+		this->dueDate.setDate(dd, mm, yyyy);
+		this->status="Incomplete";
 	}
 
 	//Sets ToDo data
 	void setToDo(int code, string description, int dd, int mm, int yyyy)
 	{
-      	id=code;
-      	itemDescription = description;
-	    dueDate.setDate(dd, mm, yyyy);
+      	this->id=code;
+      	this->itemDescription = description;
+	    this->dueDate.setDate(dd, mm, yyyy);
+
+	}
+	//check ToDo data
+	void checkToDo(){
+		this->status="Complete";
+	}
+
+	//check ToDo data
+	void uncheckToDo(){
+		this->status="Incomplete";
 	}
 
 	//Loads the ToDo Data from a given open ofstream
@@ -259,7 +274,8 @@ class ToDo : public Item
 			myStream >> month;
 			myStream >> year;
 			dueDate.setDate(day,month,year);
-			
+			myStream.ignore();
+			getline(myStream,status);
 		}
 		  
 	}
@@ -269,6 +285,7 @@ class ToDo : public Item
 	{
 	    cout << "- ToDo " << id << ", added on ";
 		addedDate.printDate();
+		cout << " | Status: " << status;
 		cout << " | Due date: ";
 		dueDate.printDate();
 		cout << " | Description: " << itemDescription;
@@ -295,6 +312,7 @@ class ToDo : public Item
 			myStream << day << endl;
 			myStream << month << endl;
 			myStream << year << endl;
+			myStream << status << endl;
 		}
 		myStream.close();
 	}
@@ -451,7 +469,36 @@ class Diary
 			  cout<<"Please enter the new due Year, number from 2000 to 2099"<<endl;
 			  cin>> yyyy;
 			  toDosArr[code-1].setToDo(code,description,dd,mm,yyyy);
+			  toDosArr[code-1].uncheckToDo();
 			  cout<<"The new list of ToDos is:"<<endl<<endl;
+			  printAllToDos();
+			  menuPause();
+			}
+		}
+	}
+
+	//Member function for completing a ToDo
+	void completeToDo()
+	{
+		int code;
+		clearConsole();
+		cout<<"*****************************************************************"<<endl;
+		cout<< "			Complete ToDo Option"<<endl<<endl;
+		if(numToDo<1){
+			cout<<"There are no ToDo in the App"<<endl;
+			menuPause();
+		} else {
+			cout<<"Enter the ToDo number to be edited from this list :"<<endl<<endl;
+			printAllToDos();
+			cout<<endl<<"Enter a ToDo number from 1 to "<<numToDo<<endl;
+			cin>> code;
+			if(code < 1 || code > numToDo){
+			  cout<<endl<<"Option out of range"<<endl;
+			  menuPause();
+			}
+			else {			
+			  toDosArr[code-1].checkToDo();
+			  cout<<endl<<"The new list of ToDos is:"<<endl<<endl;
 			  printAllToDos();
 			  menuPause();
 			}
@@ -530,6 +577,53 @@ class Diary
 		}
 	}
  
+	//Menu ToDo of the Diary Class
+    void ToDoMenu(){        
+        
+        int option=9;
+        while (option!=0){
+        	clearConsole();
+			
+            cout<<"*****************************************************************"<<endl;
+            cout<< "			The Diary App Ver 3.0"<<endl;
+			cout<<"*****************************************************************"<<endl;
+            cout<< "			       Menu ToDos"<<endl<<endl;
+            cout<< "Select one of the next options by entering the option number:"<<endl<<endl;
+            cout<< "1. Add ToDo"<<endl;
+            cout<< "2. Remove ToDo"<<endl;
+            cout<< "3. Edit ToDo"<<endl;
+            cout<< "4. Complete ToDo"<<endl;
+			cout<< "5. Print all ToDos"<<endl;
+            cout<< "0. Back to Main Menu"<<endl;
+            cout<<"*****************************************************************"<<endl;
+            cout<<"Please enter the option:"<<endl;
+            cin>> option;
+            if (option==1){
+                addToDo();
+            } else if (option==2){
+                removeToDo();
+            } else if (option==3){
+                editToDo();
+			} else if (option==4){
+                completeToDo();
+            } else if (option==5){
+				clearConsole();
+				cout<<"*****************************************************************"<<endl;
+				cout<< "			All ToDos"<<endl<<endl;
+                printAllToDos ();
+				cout<<endl<<"Going back to previous menu."<<endl;
+				menuPause();                
+            } else if (option==0){
+                cout<<endl<<"Going Back to Main Menu "<<endl;
+            } else {
+                cout<<"Invalid Option"<<endl;
+            }
+            
+        }
+        
+
+    }
+
 	//Main menu of the Diary Class
     void mainMenu(){        
         
@@ -543,32 +637,33 @@ class Diary
 			cout<<"*****************************************************************"<<endl;
             cout<< "			       Main Menu"<<endl<<endl;
             cout<< "Select one of the next options by entering the option number:"<<endl<<endl;
-            cout<< "1. Add ToDo"<<endl;
-            cout<< "2. Remove ToDo"<<endl;
-            cout<< "3. Edit ToDo"<<endl;
-            cout<< "4. Print all ToDos"<<endl;
-			cout<< "7. Search by Added Date"<<endl;
+            cout<< "1. Manage ToDos"<<endl;
+            cout<< "2. "<<endl;
+            cout<< "3. "<<endl;
+            cout<< "4. Print all Items"<<endl;
+			cout<< "5. Search by Added Date"<<endl;
             cout<< "0. To exit the program"<<endl;
             cout<<"*****************************************************************"<<endl;
             cout<<"Please enter the option:"<<endl;
             cin>> option;
             if (option==1){
-                addToDo();
+                ToDoMenu();
             } else if (option==2){
-                removeToDo();
+                
             } else if (option==3){
-                editToDo();
+                
             } else if (option==4){
 				clearConsole();
 				cout<<"*****************************************************************"<<endl;
 				cout<< "			All Diary Items"<<endl<<endl;
-                printAllToDos ();
+                cout<<endl<<"ToDos:"<<endl<<endl;
+				printAllToDos ();
 				cout<<endl<<"Going back to previous menu."<<endl;
 				menuPause();                
 			} else if (option==7){
                 searchByAddedDate ();
             } else if (option==0){
-				saveDiary ();
+			 	saveDiary ();
                 cout<<endl<<"Thank you for using The Diary App, have a nice day. "<<endl<<endl;
             } else {
                 cout<<"Invalid Option"<<endl;
