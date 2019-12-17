@@ -133,15 +133,14 @@ class Date
 	}
 };
 
-//Item class
+//Item abstract class
 class Item
 {
 	//Private data fields
-	private:
+	protected:
 	    int id;
 		Date addedDate;
 	    string itemDescription;
-	    Date itemDate;
 
 	//Public member functions
 	public:
@@ -149,8 +148,8 @@ class Item
 	//default constructor
 	Item ()
 	{
- 	    id=0;
-		itemDescription="";
+ 	    this->id=0;
+		this->itemDescription="";
 
 		time_t rawtime;
   		struct tm * timeinfo;
@@ -159,15 +158,14 @@ class Item
 		int added_dd=timeinfo->tm_mday;
 	    int added_mm=timeinfo->tm_mon+1;
 	    int added_yyyy=timeinfo->tm_year+1900;
-		addedDate.setDate(added_dd,added_mm,added_yyyy);
+		this->addedDate.setDate(added_dd,added_mm,added_yyyy);
 	}
 
 	//Parametrized constructor
-	Item (int code, string description, int dd, int mm, int yyyy)
+	Item (int code, string description)
 	{
-	    id=code;
-      	itemDescription = description;
-		itemDate.setDate(dd, mm, yyyy);
+	    this->id=code;
+      	this->itemDescription = description;
 		
 		time_t rawtime;
   		struct tm * timeinfo;
@@ -176,97 +174,33 @@ class Item
 		int added_dd=timeinfo->tm_mday;
 	    int added_mm=timeinfo->tm_mon+1;
 	    int added_yyyy=timeinfo->tm_year+1900;
-		addedDate.setDate(added_dd,added_mm,added_yyyy);
+		this->addedDate.setDate(added_dd,added_mm,added_yyyy);
+	}
+
+	//Sets Item data
+	void setItem(int code, string description)
+	{
+      	this->id=code;
+      	this->itemDescription = description;
 	}
 
 	//Sets Item data
 	void setItem(int code, string description, int dd, int mm, int yyyy)
 	{
-      	id=code;
-      	itemDescription = description;
-	    itemDate.setDate(dd, mm, yyyy);
-	}
-
-	//Loads the Item Data from a given open ofstream
-	void loadItem(ifstream &myStream, int code)
-	{
-      	int day;
-        int month;
-	    int year;
-
-		if (myStream.is_open()) {
-			myStream >> id;//skip this line
-			id=code;//the id is set bt a parameter
-			myStream >> day;
-			myStream >> month;
-			myStream >> year;
-			addedDate.setDate(day,month,year);
-			myStream.ignore();
-			getline(myStream,itemDescription);
-			myStream >> day;
-			myStream >> month;
-			myStream >> year;
-			itemDate.setDate(day,month,year);
-			
-		}
-		  
+      	this->id=code;
+      	this->itemDescription = description;
+		this->addedDate.setDate(dd, mm, yyyy);
 	}
 
 	//Sets Item id
 	void setId(int code)
 	{
-      	id=code;
+      	this->id=code;
 	}
 
-	//Get Item id
-	void getId(int& code)
-	{
-      	code=id;
-	}
 
-	//Prints Item Data to the terminal
-	void printItem()
-	{
-	    cout << "- Item " << id << ", added on ";
-		addedDate.printDate();
-		cout << " | Date: ";
-		itemDate.printDate();
-		cout << " | Description: " << itemDescription;
-	    cout << " | "<<endl;
-	}
-
-	//Saves Item Data to a given file
-	void saveItem(string fileName)
-	{
-		int day;
-        int month;
-	    int year;
-
-		ofstream myStream(fileName, ios::app);
-		if (myStream.is_open()) {
-			myStream << "item" << endl;
-			myStream << id << endl;
-			addedDate.getDate(day, month, year);
-			myStream << day << endl;
-			myStream << month << endl;
-			myStream << year << endl;
-			myStream << itemDescription << endl;
-			itemDate.getDate(day, month, year);
-			myStream << day << endl;
-			myStream << month << endl;
-			myStream << year << endl;
-		}
-		myStream.close();
-	}
-
-	//compares the object date data with the parameters
-	//Returns 1 if it is the same, else 0. 
-	int compareItemDate(int dd, int mm, int yy)
-	{
-	    if(itemDate.compareDate(dd, mm, yy)==1)
-			return 1;
-		return 0;
-	}
+	//Virtual function to print the data of the Item
+	virtual void printItem()=0;
 
 	//Destructor
 	~Item ()
@@ -275,50 +209,26 @@ class Item
 	}
 };
 
-//ToDoclass
-class ToDo
+//ToDo class
+class ToDo : public Item
 {
 	//Private data fields
 	private:
-	    int id;
-		Date addedDate;
-	    string itemDescription;
-	    Date dueDate;
+	Date dueDate;
 
 	//Public member functions
 	public:
 
 	//default constructor
-	ToDo ()
+	ToDo () : Item ()
 	{
- 	    id=0;
-		itemDescription="";
-
-		time_t rawtime;
-  		struct tm * timeinfo;
-  		time (&rawtime);
-  		timeinfo = localtime (&rawtime);				
-		int added_dd=timeinfo->tm_mday;
-	    int added_mm=timeinfo->tm_mon+1;
-	    int added_yyyy=timeinfo->tm_year+1900;
-		addedDate.setDate(added_dd,added_mm,added_yyyy);
 	}
 
 	//Parametrized constructor
-	ToDo (int code, string description, int dd, int mm, int yyyy)
+	ToDo (int code, string description, int dd, int mm, int yyyy) :
+			Item (code,description)
 	{
-	    id=code;
-      	itemDescription = description;
 		dueDate.setDate(dd, mm, yyyy);
-		
-		time_t rawtime;
-  		struct tm * timeinfo;
-  		time (&rawtime);
-  		timeinfo = localtime (&rawtime);				
-		int added_dd=timeinfo->tm_mday;
-	    int added_mm=timeinfo->tm_mon+1;
-	    int added_yyyy=timeinfo->tm_year+1900;
-		addedDate.setDate(added_dd,added_mm,added_yyyy);
 	}
 
 	//Sets ToDo data
@@ -354,20 +264,8 @@ class ToDo
 		  
 	}
 
-	//Sets ToDo id
-	void setId(int code)
-	{
-      	id=code;
-	}
-
-	//Get ToDo id
-	void getId(int& code)
-	{
-      	code=id;
-	}
-
 	//Prints ToDo Data to the terminal
-	void printToDo()
+	void printItem()
 	{
 	    cout << "- ToDo " << id << ", added on ";
 		addedDate.printDate();
@@ -456,7 +354,7 @@ class Diary
 	void printAllToDos (){
 	    int i;
 	    for (i=0;i<numToDo;i++){
-	        toDosArr[i].printToDo();
+	        toDosArr[i].printItem();
 	    }
 	} 
 
@@ -481,7 +379,7 @@ class Diary
 		numToDo++;
 		toDosArr[numToDo-1].setToDo(numToDo,description,dd,mm,yyyy);
 		cout<<endl<<"The ToDo:"<<numToDo<<" was added to your Diary:"<<endl;
-		toDosArr[numToDo-1].printToDo();
+		toDosArr[numToDo-1].printItem();
 		menuPause();
 	}
 
@@ -623,7 +521,7 @@ class Diary
 
 			  for (int i=0; i<numToDo; i++){
 					if(toDosArr[i].compareAddedDate(dd,mm,yyyy)==1){
-						toDosArr[i].printToDo();
+						toDosArr[i].printItem();
 						results++;
 					}
 			  }
