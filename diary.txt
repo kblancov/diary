@@ -1,28 +1,28 @@
 Diary
-item
+ToDo
 1
-17
+15
 12
 2019
-Navidad
-24
+Primera tarea
+20
 12
 2019
-item
+ToDo
 2
-17
+16
 12
 2019
-Nuevo Anho
-31
+Segunda super Tarea
+20
 12
 2019
-item
+ToDo
 3
 17
 12
 2019
-Dia de los Reyes
-6
-1
-2020
+Tercera Tarea
+31
+12
+2019

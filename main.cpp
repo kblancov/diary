@@ -3,11 +3,14 @@
 * Program      :  Financial Computing MSc at QMUL, Promo 2019/2019  
 * Project      :  Coursework, INTRO OBJECT-ORIENTED PROGRAMMING - 2019/20                                           
 * License      :  Apache  Ver 2.0, www.apache.org/licenses/LICENSE-2.0           
-* Description  :  Basic solution for the Diary Coursework with files
-*                                                                             
+* Description  :  Complete coursework solution with,
+*                 - A Top class "Diary" that contains all the system
+*                 - An  abstract class "Item" with the common elmenets
+*                 - 3 Sub Classes "Event", "Reminder", "ToDo"
+*                 - 2 indepente suport Classes "Date" and "Time"                         
 *                                                                             
 * Other files  :  none
-* Last Review  :  11-Dic-2019                                                  
+* Last Review  :  17-Dic-2019                                                  
 * Author       :  Camilo BLANCO                                                 
 * Mail         :  camilo.blanco@arcelec.com                                               
 **************************************************************************/
@@ -272,21 +275,163 @@ class Item
 	}
 };
 
+//ToDoclass
+class ToDo
+{
+	//Private data fields
+	private:
+	    int id;
+		Date addedDate;
+	    string itemDescription;
+	    Date dueDate;
+
+	//Public member functions
+	public:
+
+	//default constructor
+	ToDo ()
+	{
+ 	    id=0;
+		itemDescription="";
+
+		time_t rawtime;
+  		struct tm * timeinfo;
+  		time (&rawtime);
+  		timeinfo = localtime (&rawtime);				
+		int added_dd=timeinfo->tm_mday;
+	    int added_mm=timeinfo->tm_mon+1;
+	    int added_yyyy=timeinfo->tm_year+1900;
+		addedDate.setDate(added_dd,added_mm,added_yyyy);
+	}
+
+	//Parametrized constructor
+	ToDo (int code, string description, int dd, int mm, int yyyy)
+	{
+	    id=code;
+      	itemDescription = description;
+		dueDate.setDate(dd, mm, yyyy);
+		
+		time_t rawtime;
+  		struct tm * timeinfo;
+  		time (&rawtime);
+  		timeinfo = localtime (&rawtime);				
+		int added_dd=timeinfo->tm_mday;
+	    int added_mm=timeinfo->tm_mon+1;
+	    int added_yyyy=timeinfo->tm_year+1900;
+		addedDate.setDate(added_dd,added_mm,added_yyyy);
+	}
+
+	//Sets ToDo data
+	void setToDo(int code, string description, int dd, int mm, int yyyy)
+	{
+      	id=code;
+      	itemDescription = description;
+	    dueDate.setDate(dd, mm, yyyy);
+	}
+
+	//Loads the ToDo Data from a given open ofstream
+	void loadToDo(ifstream &myStream, int code)
+	{
+      	int day;
+        int month;
+	    int year;
+
+		if (myStream.is_open()) {
+			myStream >> id;//skip this line
+			id=code;//the id is set bt a parameter
+			myStream >> day;
+			myStream >> month;
+			myStream >> year;
+			addedDate.setDate(day,month,year);
+			myStream.ignore();
+			getline(myStream,itemDescription);
+			myStream >> day;
+			myStream >> month;
+			myStream >> year;
+			dueDate.setDate(day,month,year);
+			
+		}
+		  
+	}
+
+	//Sets ToDo id
+	void setId(int code)
+	{
+      	id=code;
+	}
+
+	//Get ToDo id
+	void getId(int& code)
+	{
+      	code=id;
+	}
+
+	//Prints ToDo Data to the terminal
+	void printToDo()
+	{
+	    cout << "- ToDo " << id << ", added on ";
+		addedDate.printDate();
+		cout << " | Due date: ";
+		dueDate.printDate();
+		cout << " | Description: " << itemDescription;
+	    cout << " | "<<endl;
+	}
+
+	//Saves ToDo Data to a given file
+	void saveToDo(string fileName)
+	{
+		int day;
+        int month;
+	    int year;
+
+		ofstream myStream(fileName, ios::app);
+		if (myStream.is_open()) {
+			myStream << "ToDo" << endl;
+			myStream << id << endl;
+			addedDate.getDate(day, month, year);
+			myStream << day << endl;
+			myStream << month << endl;
+			myStream << year << endl;
+			myStream << itemDescription << endl;
+			dueDate.getDate(day, month, year);
+			myStream << day << endl;
+			myStream << month << endl;
+			myStream << year << endl;
+		}
+		myStream.close();
+	}
+
+	//compares the object date data with the parameters
+	//Returns 1 if it is the same, else 0. 
+	int compareAddedDate(int dd, int mm, int yy)
+	{
+	    if(addedDate.compareDate(dd, mm, yy)==1)
+			return 1;
+		return 0;
+	}
+
+	//Destructor
+	~ToDo ()
+	{
+
+	}
+};
+
 //Diary class
 class Diary
 {
 	//Private data fields
     private:
-    //Counter for the current number of Items
-    int numItems;
-    //Array of items
-    Item itemsArr[100];
+    //Counter for the current number of ToDos
+    int numToDo;
+    //Array of ToDo
+    ToDo toDosArr[100];
     
 	//Public member functions
     public:
     //constructor
     Diary (){
-        numItems=0;
+        numToDo=0;
     }
 
 	// Clear the whole console, provided by Dr. Mustafa Bozkurt
@@ -307,76 +452,76 @@ class Diary
 		getline(cin,description);
 	}
 
-	//Print All Items in the Diary
-	void printAllItems (){
+	//Print All ToDo in the Diary
+	void printAllToDos (){
 	    int i;
-	    for (i=0;i<numItems;i++){
-	        itemsArr[i].printItem();
+	    for (i=0;i<numToDo;i++){
+	        toDosArr[i].printToDo();
 	    }
 	} 
 
-	//Member function for adding an Item
-	void addItem()
-	{
-	    string description;
-	    int dd;
-	    int mm;
-	    int yyyy;
+	//Member function for adding an ToDo
+	void addToDo()
+	{	
 		clearConsole();
+	    string description="";
+	    int dd=0;
+	    int mm=0;
+	    int yyyy=0;
 		cout<<"*****************************************************************"<<endl;
-		cout<< "			Add Item Option"<<endl<<endl;
-		cout<<"Please enter description of your new  diary item"<<endl;
+		cout<< "			Add ToDo Option"<<endl<<endl;
+		cout<<"Please enter description of your new  diary ToDo"<<endl;
 		readLine(description);
-		cout<<"Please enter Day, number from 1 to 31"<<endl;
+		cout<<"Please enter the due Day, number from 1 to 31"<<endl;
 		cin>> dd;
-		cout<<"Please enter Month, number from 1 to 12"<<endl;
+		cout<<"Please enter the due Month, number from 1 to 12"<<endl;
 		cin>> mm;
-		cout<<"Please enter Year, number from 2000 to 2099"<<endl;
+		cout<<"Please enter the due Year, number from 2000 to 2099"<<endl;
 		cin>> yyyy;
-		numItems++;
-		itemsArr[numItems-1].setItem(numItems,description,dd,mm,yyyy);
-		cout<<endl<<"The item:"<<numItems<<" was added to your Diary:"<<endl;
-		itemsArr[numItems-1].printItem();
+		numToDo++;
+		toDosArr[numToDo-1].setToDo(numToDo,description,dd,mm,yyyy);
+		cout<<endl<<"The ToDo:"<<numToDo<<" was added to your Diary:"<<endl;
+		toDosArr[numToDo-1].printToDo();
 		menuPause();
 	}
 
-	//Member function for removing an Item
-	void removeItem()
+	//Member function for removing an ToDo
+	void removeToDo()
 	{
 	    int code;
 		clearConsole();
 		cout<<"*****************************************************************"<<endl;
-		cout<< "			Remove Item Option"<<endl<<endl;
-		if(numItems<1){
-			cout<<"There are no items in the App"<<endl;
+		cout<< "			Remove ToDo Option"<<endl<<endl;
+		if(numToDo<1){
+			cout<<"There are no ToDos in the App"<<endl;
 			menuPause();
 		} else {
-			cout<<"The current item list is :"<<endl<<endl;
-			printAllItems();
-			cout<<endl<<"Enter a Item number from 1 to "<<numItems<<" to be removed"<<endl;
+			cout<<"The current ToDo list is :"<<endl<<endl;
+			printAllToDos();
+			cout<<endl<<"Enter a ToDo number from 1 to "<<numToDo<<" to be removed"<<endl;
 			cin>> code;
-			if(code < 1 || code > numItems){
+			if(code < 1 || code > numToDo){
 			  cout<<endl<<"Option out of range"<<endl;
 			  menuPause();
 			}
 			else {
 			  int i;
-			  for(i=code-1;i<numItems-1;i++){
-				//I dont know why i can do this, ask Moustafa
-				itemsArr[i]=itemsArr[i+1];
-				//Use the Item.set Method to udate the Id
-				itemsArr[i].setId(i+1);
+			  for(i=code-1;i<numToDo-1;i++){
+				//Use the default shallow asign function
+				toDosArr[i]=toDosArr[i+1];
+				//Use the ToDo.setId Method to update the Id
+				toDosArr[i].setId(i+1);
 			  }
-			  numItems--;
+			  numToDo--;
 			  cout<<"The new list is:"<<endl<<endl;
-			  printAllItems();
+			  printAllToDos();
 			  menuPause();
 			}
 		}
 	}
 
-	//Member function for edting an Item
-	void editItem()
+	//Member function for edting a ToDo
+	void editToDo()
 	{
 	    int dd;
 	    int mm;
@@ -385,31 +530,31 @@ class Diary
 		int code;
 		clearConsole();
 		cout<<"*****************************************************************"<<endl;
-		cout<< "			Edit Item Option"<<endl<<endl;
-		if(numItems<1){
-			cout<<"There are no items in the App"<<endl;
+		cout<< "			Edit ToDo Option"<<endl<<endl;
+		if(numToDo<1){
+			cout<<"There are no ToDo in the App"<<endl;
 			menuPause();
 		} else {
 			cout<<"Enter the item number to be edited from this list :"<<endl<<endl;
-			printAllItems();
-			cout<<endl<<"Enter a number from 1 to "<<numItems<<endl;
+			printAllToDos();
+			cout<<endl<<"Enter a number from 1 to "<<numToDo<<endl;
 			cin>> code;
-			if(code < 1 || code > numItems){
+			if(code < 1 || code > numToDo){
 			  cout<<endl<<"Option out of range"<<endl;
 			  menuPause();
 			}
 			else {			
-			  cout<<"Please enter the new description for your diary item"<<endl;
+			  cout<<"Please enter the new description for your ToDo"<<endl;
 			  readLine(description);
-			  cout<<"Please enter the new Day, number from 1 to 31"<<endl;
+			  cout<<"Please enter the new due Day, number from 1 to 31"<<endl;
 			  cin>> dd;
-			  cout<<"Please enter the new Month, number from 1 to 12"<<endl;
+			  cout<<"Please enter the new due Month, number from 1 to 12"<<endl;
 			  cin>> mm;
-			  cout<<"Please enter the new Year, number from 2000 to 2099"<<endl;
+			  cout<<"Please enter the new due Year, number from 2000 to 2099"<<endl;
 			  cin>> yyyy;
-			  itemsArr[code-1].setItem(code,description,dd,mm,yyyy);
-			  cout<<"The new list is:"<<endl<<endl;
-			  printAllItems();
+			  toDosArr[code-1].setToDo(code,description,dd,mm,yyyy);
+			  cout<<"The new list of ToDos is:"<<endl<<endl;
+			  printAllToDos();
 			  menuPause();
 			}
 		}
@@ -426,9 +571,9 @@ class Diary
 		}
 		myStream.close();
 		
-		//Then, loop over itemsArr and append each item data to the file diary.txt
-		for (int i=0;i<numItems;i++){
-			itemsArr[i].saveItem(fileName);
+		//Then, loop over ToDosArr and append each ToDo data to the file diary.txt
+		for (int i=0;i<numToDo;i++){
+			toDosArr[i].saveToDo(fileName);
 		}
 		cout<<endl<<"Diary saved in "<<fileName <<endl;
 		return 1;
@@ -442,9 +587,10 @@ class Diary
 		ifstream myStream(fileName);
 		if (myStream.is_open()) {
 			while(getline(myStream,line)){
-				if((line.compare("item")) == 0){
-						itemsArr[numItems].loadItem(myStream,numItems+1);
-						numItems++;	
+				//if the line is a ToDo
+				if((line.compare("ToDo")) == 0){
+						toDosArr[numToDo].loadToDo(myStream,numToDo+1);
+						numToDo++;	
 				}
 			}
 			myStream.close();
@@ -454,15 +600,15 @@ class Diary
 
 	//Reads a Date from the console and print coincidences
 
-	int searchByDate (){
+	int searchByAddedDate (){
 	 	int dd;
 	    int mm;
 	    int yyyy;
 		int results=0;
 		clearConsole();
 		cout<<"*****************************************************************"<<endl;
-		cout<< "			Search by Date Option"<<endl<<endl;
-		if(numItems<1){
+		cout<< "			Search by Added Date Option"<<endl<<endl;
+		if(numToDo<1){
 			cout<<"There are no items in the App"<<endl;
 			menuPause();
 		} else {
@@ -475,9 +621,9 @@ class Diary
 			  cout<<endl<<"*****************************************************************"<<endl;
 			  cout<<"Search Results:"<<endl<<endl;
 
-			  for (int i=0; i<numItems; i++){
-					if(itemsArr[i].compareItemDate(dd,mm,yyyy)==1){
-						itemsArr[i].printItem();
+			  for (int i=0; i<numToDo; i++){
+					if(toDosArr[i].compareAddedDate(dd,mm,yyyy)==1){
+						toDosArr[i].printToDo();
 						results++;
 					}
 			  }
@@ -499,30 +645,30 @@ class Diary
 			cout<<"*****************************************************************"<<endl;
             cout<< "			       Main Menu"<<endl<<endl;
             cout<< "Select one of the next options by entering the option number:"<<endl<<endl;
-            cout<< "1. Add Item"<<endl;
-            cout<< "2. Remove Item"<<endl;
-            cout<< "3. Edit Item"<<endl;
-            cout<< "4. Print all Items"<<endl;
-			cout<< "7. Search by Date"<<endl;
+            cout<< "1. Add ToDo"<<endl;
+            cout<< "2. Remove ToDo"<<endl;
+            cout<< "3. Edit ToDo"<<endl;
+            cout<< "4. Print all ToDos"<<endl;
+			cout<< "7. Search by Added Date"<<endl;
             cout<< "0. To exit the program"<<endl;
             cout<<"*****************************************************************"<<endl;
             cout<<"Please enter the option:"<<endl;
             cin>> option;
             if (option==1){
-                addItem();
+                addToDo();
             } else if (option==2){
-                removeItem();
+                removeToDo();
             } else if (option==3){
-                editItem();
+                editToDo();
             } else if (option==4){
 				clearConsole();
 				cout<<"*****************************************************************"<<endl;
 				cout<< "			All Diary Items"<<endl<<endl;
-                printAllItems ();
+                printAllToDos ();
 				cout<<endl<<"Going back to previous menu."<<endl;
 				menuPause();                
 			} else if (option==7){
-                searchByDate ();
+                searchByAddedDate ();
             } else if (option==0){
 				saveDiary ();
                 cout<<endl<<"Thank you for using The Diary App, have a nice day. "<<endl<<endl;
