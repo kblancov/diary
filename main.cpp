@@ -97,11 +97,20 @@ class Date
 	}
 
 	//returns the month, day and year
-	void getDate(int& dd, int& mm, int& yy)
+	void getDate(int &dd, int &mm, int &yy)
 	{
 	    dd = day;
         mm = month;
 	    yy =year;
+	}
+
+	//compares the object date data with the parameters
+	//Returns 1 if it is the same, else 0. 
+	int compareDate(int dd, int mm, int yy)
+	{
+	    if( dd == day && mm == month && yy ==year)
+			return 1;
+		return 0;
 	}
 
 	//displays the month, day and year to the screen
@@ -139,6 +148,15 @@ class Item
 	{
  	    id=0;
 		itemDescription="";
+
+		time_t rawtime;
+  		struct tm * timeinfo;
+  		time (&rawtime);
+  		timeinfo = localtime (&rawtime);				
+		int added_dd=timeinfo->tm_mday;
+	    int added_mm=timeinfo->tm_mon+1;
+	    int added_yyyy=timeinfo->tm_year+1900;
+		addedDate.setDate(added_dd,added_mm,added_yyyy);
 	}
 
 	//Parametrized constructor
@@ -164,15 +182,31 @@ class Item
       	id=code;
       	itemDescription = description;
 	    itemDate.setDate(dd, mm, yyyy);
+	}
 
-		time_t rawtime;
-  		struct tm * timeinfo;
-  		time (&rawtime);
-  		timeinfo = localtime (&rawtime);				
-		int added_dd=timeinfo->tm_mday;
-	    int added_mm=timeinfo->tm_mon+1;
-	    int added_yyyy=timeinfo->tm_year+1900;
-		addedDate.setDate(added_dd,added_mm,added_yyyy);
+	//Loads the Item Data from a given open ofstream
+	void loadItem(ifstream &myStream, int code)
+	{
+      	int day;
+        int month;
+	    int year;
+
+		if (myStream.is_open()) {
+			myStream >> id;//skip this line
+			id=code;//the id is set bt a parameter
+			myStream >> day;
+			myStream >> month;
+			myStream >> year;
+			addedDate.setDate(day,month,year);
+			myStream.ignore();
+			getline(myStream,itemDescription);
+			myStream >> day;
+			myStream >> month;
+			myStream >> year;
+			itemDate.setDate(day,month,year);
+			
+		}
+		  
 	}
 
 	//Sets Item id
@@ -190,11 +224,11 @@ class Item
 	//Prints Item Data to the terminal
 	void printItem()
 	{
-	    cout << "- Item " << id << ", Added on ";
+	    cout << "- Item " << id << ", added on ";
 		addedDate.printDate();
-		cout << " | Description: " << itemDescription;
 		cout << " | Date: ";
 		itemDate.printDate();
+		cout << " | Description: " << itemDescription;
 	    cout << " | "<<endl;
 	}
 
@@ -220,6 +254,15 @@ class Item
 			myStream << year << endl;
 		}
 		myStream.close();
+	}
+
+	//compares the object date data with the parameters
+	//Returns 1 if it is the same, else 0. 
+	int compareItemDate(int dd, int mm, int yy)
+	{
+	    if(itemDate.compareDate(dd, mm, yy)==1)
+			return 1;
+		return 0;
 	}
 
 	//Destructor
@@ -362,7 +405,7 @@ class Diary
 			  cin>> dd;
 			  cout<<"Please enter the new Month, number from 1 to 12"<<endl;
 			  cin>> mm;
-			  cout<<"Please enter the newYear, number from 2000 to 2099"<<endl;
+			  cout<<"Please enter the new Year, number from 2000 to 2099"<<endl;
 			  cin>> yyyy;
 			  itemsArr[code-1].setItem(code,description,dd,mm,yyyy);
 			  cout<<"The new list is:"<<endl<<endl;
@@ -372,7 +415,7 @@ class Diary
 		}
 	}
 
-	//Print All Items in the Diary
+	//Saves Diary Objects to the diary.txt file
 	int saveDiary (){
 		string fileName="diary.txt";
 		int option = 0;
@@ -400,8 +443,74 @@ class Diary
 			return 1;
 		}
 		return 0;
+	}
+
+	//Loads Diary Objects from the diary.txt file
+	int loadDiary (){
+		string fileName="diary.txt";
+		int option = 0;
+		clearConsole();
+		cout<<"*****************************************************************"<<endl;
+		cout<< "			Load Diary Option"<<endl<<endl;
+		cout<<"The file "<<fileName <<" will be loadded on this Diary"<<endl;
+		cout<<"Are you sure? "<<endl<<endl;
+		cout<<"Enter 1 to confirm, or 0 to return to the main menu."<<endl;
+		cin>>option;
+		
+		if (option == 1){
+			string line;
+			ifstream myStream(fileName);
+			if (myStream.is_open()) {
+
+				while(getline(myStream,line)){
+					if((line.compare("item")) == 0){
+						itemsArr[numItems].loadItem(myStream,numItems+1);
+						numItems++;
+					} 	
+				}
+			}
+			myStream.close();
+			cout<<endl<<"Diary loadded from "<<fileName <<endl;
+			menuPause();
+			return 1;
+		}
+		return 0;
 	} 
-    
+
+	//Reads a Date from the console and print coincidences
+
+	int searchByDate (){
+	 	int dd;
+	    int mm;
+	    int yyyy;
+		int results=0;
+		clearConsole();
+		cout<<"*****************************************************************"<<endl;
+		cout<< "			Search by Date Option"<<endl<<endl;
+		if(numItems<1){
+			cout<<"There are no items in the App"<<endl;
+			menuPause();
+		} else {
+			  cout<<"Please enter the Day, number from 1 to 31"<<endl;
+			  cin>> dd;
+			  cout<<"Please enter the Month, number from 1 to 12"<<endl;
+			  cin>> mm;
+			  cout<<"Please enter the Year, number from 2000 to 2099"<<endl;
+			  cin>> yyyy;
+			  cout<<endl<<"*****************************************************************"<<endl;
+			  cout<<"Search Results:"<<endl<<endl;
+
+			  for (int i=0; i<numItems; i++){
+					if(itemsArr[i].compareItemDate(dd,mm,yyyy)==1){
+						itemsArr[i].printItem();
+						results++;
+					}
+			  }
+			  cout<<endl<<results<<" records found for the entered date"<<endl;
+			  menuPause();
+		}
+	}
+ 
 	//Main menu of the Diary Class
     void mainMenu(){        
         
@@ -409,6 +518,7 @@ class Diary
         
         while (option!=0){
         	clearConsole();
+			
             cout<<"*****************************************************************"<<endl;
             cout<< "			The Diary App Ver 1.0"<<endl;
 			cout<<"*****************************************************************"<<endl;
@@ -420,6 +530,7 @@ class Diary
             cout<< "4. Print all Items"<<endl;
 			cout<< "5. Load Diary from file"<<endl;
 			cout<< "6. Save Diary to file"<<endl;
+			cout<< "7. Search by Date"<<endl;
             cout<< "0. To exit the program"<<endl;
             cout<<"*****************************************************************"<<endl;
             cout<<"Please enter the option:"<<endl;
@@ -438,9 +549,11 @@ class Diary
 				cout<<endl<<"Going back to previous menu."<<endl;
 				menuPause();
 			} else if (option==5){
-                saveDiary ();
+                loadDiary ();
             } else if (option==6){
                 saveDiary ();
+			} else if (option==7){
+                searchByDate ();
             } else if (option==0){
                 cout<<endl<<"Thank you for using The Diary App, have a nice day. "<<endl<<endl;
             } else {
