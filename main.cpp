@@ -418,63 +418,38 @@ class Diary
 	//Saves Diary Objects to the diary.txt file
 	int saveDiary (){
 		string fileName="diary.txt";
-		int option = 0;
-		clearConsole();
-		cout<<"*****************************************************************"<<endl;
-		cout<< "			Save Diary Option"<<endl<<endl;
-		cout<<"The file "<<fileName <<" will be overwritten with this Diary data"<<endl;
-		cout<<"Are you sure? "<<endl<<endl;
-		cout<<"Enter 1 to confirm, or 0 to return to the main menu."<<endl;
-		cin>>option;
 		
-		if (option == 1){
-			ofstream myStream(fileName);
-			if (myStream.is_open()) {
-				myStream << "Diary" << endl;
-			}
-			myStream.close();
-			int i;
-			for (i=0;i<numItems;i++){
-				//here here
-				itemsArr[i].saveItem(fileName);
-			}
-			cout<<endl<<"Diary saved in "<<fileName <<endl;
-			menuPause();
-			return 1;
+		//First Open diary.txt in new mode and save the word "Diary" to clean the file
+		ofstream myStream(fileName);
+		if (myStream.is_open()) {
+			myStream << "Diary" << endl;
 		}
-		return 0;
+		myStream.close();
+		
+		//Then, loop over itemsArr and append each item data to the file diary.txt
+		for (int i=0;i<numItems;i++){
+			itemsArr[i].saveItem(fileName);
+		}
+		cout<<endl<<"Diary saved in "<<fileName <<endl;
+		return 1;
+
 	}
 
 	//Loads Diary Objects from the diary.txt file
 	int loadDiary (){
 		string fileName="diary.txt";
-		int option = 0;
-		clearConsole();
-		cout<<"*****************************************************************"<<endl;
-		cout<< "			Load Diary Option"<<endl<<endl;
-		cout<<"The file "<<fileName <<" will be loadded on this Diary"<<endl;
-		cout<<"Are you sure? "<<endl<<endl;
-		cout<<"Enter 1 to confirm, or 0 to return to the main menu."<<endl;
-		cin>>option;
-		
-		if (option == 1){
-			string line;
-			ifstream myStream(fileName);
-			if (myStream.is_open()) {
-
-				while(getline(myStream,line)){
-					if((line.compare("item")) == 0){
+		string line;
+		ifstream myStream(fileName);
+		if (myStream.is_open()) {
+			while(getline(myStream,line)){
+				if((line.compare("item")) == 0){
 						itemsArr[numItems].loadItem(myStream,numItems+1);
-						numItems++;
-					} 	
+						numItems++;	
 				}
 			}
 			myStream.close();
-			cout<<endl<<"Diary loadded from "<<fileName <<endl;
-			menuPause();
-			return 1;
 		}
-		return 0;
+		return 1;
 	} 
 
 	//Reads a Date from the console and print coincidences
@@ -515,12 +490,12 @@ class Diary
     void mainMenu(){        
         
         int option=9;
-        
+        loadDiary ();
         while (option!=0){
         	clearConsole();
 			
             cout<<"*****************************************************************"<<endl;
-            cout<< "			The Diary App Ver 1.0"<<endl;
+            cout<< "			The Diary App Ver 3.0"<<endl;
 			cout<<"*****************************************************************"<<endl;
             cout<< "			       Main Menu"<<endl<<endl;
             cout<< "Select one of the next options by entering the option number:"<<endl<<endl;
@@ -528,8 +503,6 @@ class Diary
             cout<< "2. Remove Item"<<endl;
             cout<< "3. Edit Item"<<endl;
             cout<< "4. Print all Items"<<endl;
-			cout<< "5. Load Diary from file"<<endl;
-			cout<< "6. Save Diary to file"<<endl;
 			cout<< "7. Search by Date"<<endl;
             cout<< "0. To exit the program"<<endl;
             cout<<"*****************************************************************"<<endl;
@@ -547,14 +520,11 @@ class Diary
 				cout<< "			All Diary Items"<<endl<<endl;
                 printAllItems ();
 				cout<<endl<<"Going back to previous menu."<<endl;
-				menuPause();
-			} else if (option==5){
-                loadDiary ();
-            } else if (option==6){
-                saveDiary ();
+				menuPause();                
 			} else if (option==7){
                 searchByDate ();
             } else if (option==0){
+				saveDiary ();
                 cout<<endl<<"Thank you for using The Diary App, have a nice day. "<<endl<<endl;
             } else {
                 cout<<"Invalid Option"<<endl;
