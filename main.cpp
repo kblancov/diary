@@ -4,10 +4,10 @@
 * Project      :  Coursework, INTRO OBJECT-ORIENTED PROGRAMMING - 2019/20                                           
 * License      :  Apache  Ver 2.0, www.apache.org/licenses/LICENSE-2.0           
 * Description  :  Complete coursework solution with,
-*                 - A Top class "Diary" that contains all the system
+*                 - A Main class "Diary" that contains all the system
 *                 - An  abstract class "Item" with the common elmenets
 *                 - 3 Sub Classes "Event", "Reminder", "ToDo"
-*                 - 2 indepente suport Classes "Date" and "Time"                         
+*                 - 2 independent Classes "Date" and "Time"                         
 *                                                                             
 * Other files  :  none
 * Last Review  :  17-Dic-2019                                                  
@@ -21,7 +21,13 @@
 #include <time.h>       
 using namespace std;
 
-//Date class
+/**************************************************************************                                    
+* Class        	:  	Date
+* Type			:  	Stand Alone
+* Scope			: 	Date data type and Management, format, dd-mm-yyyy
+* Variables   	:   3
+* Functions		:   7                                                                                     
+**************************************************************************/
 class Date
 {
 	//Private data fields
@@ -133,7 +139,13 @@ class Date
 	}
 };
 
-//Time class hh:mm 24 hours format
+/**************************************************************************                                    
+* Class        	:  	Time
+* Type			:  	Stand Alone
+* Scope			: 	Time data type and Management, 24 hours format, hh:mm
+* Variables   	:   2
+* Functions		:   6                                                                                     
+**************************************************************************/
 class Time
 {
 	//Private data fields
@@ -217,7 +229,13 @@ class Time
 	}
 };
 
-//Item abstract class
+/**************************************************************************                                    
+* Class        	:  	Time
+* Type			:  	Abstract class, Parent of ToDo, Reminder and Event
+* Scope			: 	Common type for Diary Items
+* Variables   	:   3
+* Functions		:   7 + 1 Pure virtual                                                                                    
+**************************************************************************/
 class Item
 {
 	//Private data fields
@@ -282,7 +300,6 @@ class Item
       	this->id=code;
 	}
 
-
 	//Virtual function to print the data of the Item
 	virtual void printItem()=0;
 
@@ -295,7 +312,6 @@ class Item
 		return 0;
 	}
 
-
 	//Destructor
 	~Item ()
 	{
@@ -303,7 +319,13 @@ class Item
 	}
 };
 
-//ToDo class
+/**************************************************************************                                    
+* Class        	:  	ToDo
+* Type			:  	Child class, Decent from Item
+* Scope			: 	ToDo type for Diary Items
+* Variables   	:   Parent + 2
+* Functions		:   Inherited + 9                                                                                    
+**************************************************************************/
 class ToDo : public Item
 {
 	//Private data fields
@@ -338,12 +360,13 @@ class ToDo : public Item
 	    this->dueDate.setDate(dd, mm, yyyy);
 
 	}
+
 	//check ToDo data
 	void checkToDo(){
 		this->status="Complete";
 	}
 
-	//check ToDo data
+	//uncheck ToDo data
 	void uncheckToDo(){
 		this->status="Incomplete";
 	}
@@ -377,12 +400,12 @@ class ToDo : public Item
 	//Prints ToDo Data to the terminal
 	void printItem()
 	{
-	    cout << "- ToDo " << id << ", added on ";
+	    cout << "- TD " << id << ", added ";
 		addedDate.printDate();
 		cout << " | Status: " << status;
-		cout << " | Due date: ";
+		cout << " | Due : ";
 		dueDate.printDate();
-		cout << " | Description: " << itemDescription;
+		cout << " | Desc. " << itemDescription;
 	    cout << " | "<<endl;
 	}
 
@@ -418,7 +441,13 @@ class ToDo : public Item
 	}
 };
 
-//Reminder class
+/**************************************************************************                                    
+* Class        	:  	Reminder
+* Type			:  	Child class, Decent from Item
+* Scope			: 	Reminder type for Diary Items
+* Variables   	:   Parent + 3
+* Functions		:   Inherited + 7                                                                                    
+**************************************************************************/
 class Reminder : public Item
 {
 	//Private data fields
@@ -515,14 +544,14 @@ class Reminder : public Item
 	//Prints Reminder Data to the terminal
 	void printItem()
 	{
-	    cout << "- Reminder " << id << ", added on ";
+	    cout << "- Rem " << id << ", added ";
 		addedDate.printDate();
-		cout << " | Target Date: ";
+		cout << " | Target: ";
 		targetDate.printDate();
-		cout << " | Target Time: ";
+		cout << " at ";
 		targetTime.printTime();
 		cout << " | Type: " << remType;
-		cout << " | Description: " << itemDescription;
+		cout << " | Desc. " << itemDescription;
 	    cout << " | "<<endl;
 	}
 
@@ -563,8 +592,205 @@ class Reminder : public Item
 	}
 };
 
+/**************************************************************************                                    
+* Class        	:  	Event
+* Type			:  	Child class, Decent from Item
+* Scope			: 	Event type for Diary Items
+* Variables   	:   Parent + ...
+* Functions		:   Inherited + ...                                                                                    
+**************************************************************************/
+class Event : public Item
+{
+	//Private data fields
+	private:
+	//String to store the Type of Event
+	string eventType;
+	string location;
+	string attendees;
+	Date startDate;
+	Date endDate;
+	Time startTime;
+	Time endTime;
+	
 
-//Diary class
+	//Public member functions
+	public:
+
+	//default constructor
+	Event () : Item ()
+	{
+		this->eventType="";
+		this->location="";
+		this->attendees="";
+	}
+
+	//Parametrized constructor
+	Event (int code, string description, int type, string location, string attendees, int start_dd, int start_mm, int start_yyyy, int start_hour, int start_minu, int end_dd, int end_mm, int end_yyyy, int end_hour, int end_minu) :
+			Item (code,description)
+	{
+		
+		//set the Event type acording to the options 
+		if (type==1)
+			this->eventType="Meeting";
+		else if (type==2)
+			this->eventType="Conference";
+		else if (type==3)
+			this->eventType="Seminar";
+		else if (type==4)
+			this->eventType="Talk";
+		else if (type==5)
+			this->eventType="Team-building event";
+		else
+			this->eventType="";
+
+		this->startDate.setDate(start_dd, start_mm, start_yyyy);
+		this->startTime.setTime(start_hour,start_minu);
+		this->endDate.setDate(end_dd, end_mm, end_yyyy);
+		this->endTime.setTime(end_hour,end_minu);
+	}
+
+	//Sets Event data
+	void setEvent(int code, string description, int type, string location, string attendees, int start_dd, int start_mm, int start_yyyy, int start_hour, int start_minu, int end_dd, int end_mm, int end_yyyy, int end_hour, int end_minu)
+	{
+		//set the Event type acording to the options 
+		if (type==1)
+			this->eventType="Meeting";
+		else if (type==2)
+			this->eventType="Conference";
+		else if (type==3)
+			this->eventType="Seminar";
+		else if (type==4)
+			this->eventType="Talk";
+		else if (type==5)
+			this->eventType="Team-building event";
+		else
+			this->eventType="";
+
+		this->startDate.setDate(start_dd, start_mm, start_yyyy);
+		this->startTime.setTime(start_hour,start_minu);
+		this->endDate.setDate(end_dd, end_mm, end_yyyy);
+		this->endTime.setTime(end_hour,end_minu);
+	}
+
+	//Loads the Event Data from a given open ofstream
+	void loadEvent(ifstream &myStream, int code)
+	{
+
+      	int day;
+        int month;
+	    int year;
+		int hour;
+		int minu;
+
+		if (myStream.is_open()) {
+
+			myStream >> id;//skip this line
+			id=code;//the id is set bt a parameter
+			myStream >> day;
+			myStream >> month;
+			myStream >> year;
+			addedDate.setDate(day,month,year);
+			myStream.ignore();
+			getline(myStream,itemDescription);
+
+			myStream >> day;
+			myStream >> month;
+			myStream >> year;
+			startDate.setDate(day,month,year);
+			myStream >> hour;
+			myStream >> minu;
+			startTime.setTime(hour,minu);
+
+			myStream >> day;
+			myStream >> month;
+			myStream >> year;
+			endDate.setDate(day,month,year);
+			myStream >> hour;
+			myStream >> minu;
+			endTime.setTime(hour,minu);
+
+			myStream.ignore();
+			getline(myStream,eventType);
+			myStream.ignore();
+			getline(myStream,location);
+			myStream.ignore();
+			getline(myStream,attendees);
+		}
+	}
+
+	//Prints Event Data to the terminal
+	void printItem()
+	{
+	    cout << "- Event " << id << ", added on ";
+		addedDate.printDate();
+		cout << " | Start : ";
+		startDate.printDate();
+		cout << " at ";
+		startTime.printTime();
+		cout << " | End ";
+		endDate.printDate();
+		cout << " at ";
+		endTime.printTime();
+		cout << " | Type: " << eventType;
+		cout << " | Loc: " << location;
+		cout << " | Atts: " << attendees;
+		cout << " | Desc: " << itemDescription;
+	    cout << " | "<<endl;
+	}
+
+	//Saves Event Data to a given file
+	void saveEvent(string fileName)
+	{
+		int day;
+        int month;
+	    int year;
+		int hour;
+		int minu;
+
+		ofstream myStream(fileName, ios::app);
+		if (myStream.is_open()) {
+			myStream << "Event" << endl;
+			myStream << id << endl;
+			addedDate.getDate(day, month, year);
+			myStream << day << endl;
+			myStream << month << endl;
+			myStream << year << endl;
+			myStream << itemDescription << endl;
+			startDate.getDate(day, month, year);
+			myStream << day << endl;
+			myStream << month << endl;
+			myStream << year << endl;
+			startTime.getTime(hour,minu);
+			myStream << hour << endl;
+			myStream << minu << endl;
+			endDate.getDate(day, month, year);
+			myStream << day << endl;
+			myStream << month << endl;
+			myStream << year << endl;
+			endTime.getTime(hour,minu);
+			myStream << hour << endl;
+			myStream << minu << endl;
+			myStream << eventType << endl;
+			myStream << location << endl;
+			myStream << attendees << endl;
+		}
+		myStream.close();
+	}
+
+	//Destructor
+	~Event ()
+	{
+
+	}
+};
+
+/**************************************************************************                                    
+* Class        	:  	Diary
+* Type			:  	Top Class composed, contains all events
+* Scope			: 	All App
+* Variables   	:   9
+* Functions		:   Extense, divided in Groups of functions                                                                                    
+**************************************************************************/
 class Diary
 {
 	//Private data fields
@@ -573,20 +799,23 @@ class Diary
 	//Maximun number of Items per type
 	int maxToDos;
 	int maxReminders;
+	int maxEvents;
 
     //Counter for the current number of Items per type
     int numToDo;
 	int numReminders;
+	int numEvents;
 
     //Pointer to a dynamics arrays per type
     ToDo* toDosArr;
 	Reminder* remindersArr;
+	Event* eventsArr;
 
 	//Public member functions
     public:
 
 /**************************************************************************                                    
-* Class        	:  	Diary
+* Group of Class:  	Diary
 * Function Group:  	General
 * Socope		: 	Member functions for general propouses  
 * Numel      	:   4 Functions.                                                                                        
@@ -600,10 +829,13 @@ class Diary
         this->numToDo=0;
 		this->maxReminders=200;
 		this->numReminders=0;
+		this->maxEvents=100;
+		this->numEvents=0;
 
 		//Alocate the memory arrays per type in the Heap
 		this->toDosArr= new ToDo[this->maxToDos];
 		this->remindersArr= new Reminder[this->maxReminders];
+		this->eventsArr= new Event[this->maxEvents];
     }
 
 	// Clear the whole console, provided by Dr. Mustafa Bozkurt
@@ -625,7 +857,7 @@ class Diary
 	}
 
 /**************************************************************************                                    
-* Class        	:  	Diary
+* Group of Class:  	Diary
 * Function Group:  	ToDo Array 
 * Scope			: 	Management of all functionalities related to ToDos
 * Numel      	:   5 Functions.                                                                                        
@@ -769,7 +1001,7 @@ class Diary
 	}
 
 /**************************************************************************                                    
-* Class        	:  	Diary
+* Group of Class:  	Diary
 * Function Group:  	Reminders Array 
 * Scope			: 	Management of all functions related to Reminders
 * Numel      	:   4 Functions.                                                                                        
@@ -809,7 +1041,6 @@ class Diary
 		cin>> hour;
 		cout<<"Please enter the target Minute, number from 0 to 59"<<endl;
 		cin>> minu;
-		
 		cout<<endl<<"There are 5 diferents types of Reminders."<<endl;
  		cout<<"Please, select one option by entering the option number:"<<endl<<endl;
         cout<< "1. Deadline"<<endl;
@@ -919,7 +1150,197 @@ class Diary
 	}
 
 /**************************************************************************                                    
-* Class        	:  	Diary
+* Group of Class:  	Diary
+* Function Group:  	Events Array 
+* Scope			: 	Management of all functions related to Events
+* Numel      	:   4 Functions.                                                                                        
+**************************************************************************/
+
+	//Print All Events in the Diary
+	void printAllEvents ();
+	/*{
+	    int i;
+	    for (i=0;i<numReminders;i++){
+	        remindersArr[i].printItem();
+	    }
+	} */
+
+	//Member function for adding an Event
+	void addEvent()
+	{	
+		//Declare and initialize variables
+	    string description="";
+	    int start_dd=0;
+	    int start_mm=0;
+	    int start_yyyy=0;
+		int start_hour=0;
+		int start_minu=0;
+		int end_dd=0;
+	    int end_mm=0;
+	    int end_yyyy=0;
+		int end_hour=0;
+		int end_minu=0;
+		int type=0;
+		string location="";
+		string attendees="";
+		//Print the user interface
+		clearConsole();
+		cout<<"*****************************************************************"<<endl;
+		cout<< "			Add Event Option"<<endl<<endl;
+		
+		//Read the description
+		cout<<"Please enter description of your new Event"<<endl;
+		cin.ignore();
+		getline(cin,description);
+        
+		//Read the start hour
+		cout<<"Please enter the start Year, number from 2000 to 2099"<<endl;
+		cin>> start_yyyy;
+		cout<<"Please enter the start Month, number from 1 to 12"<<endl;
+		cin>> start_mm;
+		cout<<"Please enter the start Day, number from 1 to 31"<<endl;
+		cin>> start_dd;
+		cout<<"Please enter the start  Hour, number from 0 to 23"<<endl;
+		cin>> start_hour;
+		cout<<"Please enter the start Minute, number from 0 to 59"<<endl;
+		cin>> start_minu;
+       
+	    //Read the end hour
+		cout<<"Please enter the end Year, number from 2000 to 2099"<<endl;
+		cin>> end_yyyy;
+		cout<<"Please enter the end Month, number from 1 to 12"<<endl;
+		cin>> end_mm;
+		cout<<"Please enter the end Day, number from 1 to 31"<<endl;
+		cin>> end_dd;
+		cout<<"Please enter the end Hour, number from 0 to 23"<<endl;
+		cin>> end_hour;
+		cout<<"Please enter the end Minute, number from 0 to 59"<<endl;
+		cin>> end_minu;
+
+        //Select the event type
+		cout<<endl<<"There are 5 diferents types of Events"<<endl;
+ 		cout<<"Please, select one option by entering the option number:"<<endl<<endl;
+        cout<< "1. Meeting"<<endl;
+        cout<< "2. Conference"<<endl;
+        cout<< "3. Seminar"<<endl;
+        cout<< "4. Talk"<<endl;
+		cout<< "5. Team-building event"<<endl<<endl;
+        cout<<"Please enter the option:"<<endl;
+		cin>> type;
+
+		//Read the location
+		cout<<"Please enter the location of your new Event"<<endl;
+		cin.ignore();
+		getline(cin,location);
+
+		//Read the attendee
+		cout<<"Please enter the attendees to your new Event"<<endl;
+		cout<<"You can enter various names separted by commas all in the same line"<<endl;
+		cin.ignore();
+		getline(cin,attendees);
+
+		numEvents++;
+
+		eventsArr[numEvents-1].setEvent(numEvents,description,type, location, attendees, start_dd, start_mm, start_yyyy, start_hour, start_minu, end_dd, end_mm, end_yyyy, end_hour, end_minu);
+		cout<<endl<<"The event:"<<numEvents<<" was added to your Diary:"<<endl;
+		eventsArr[numEvents-1].printItem();
+		menuPause();
+	}
+
+	//Member function for removing an Event
+	void removeEvents();
+	/*{
+	    int code;
+		clearConsole();
+		cout<<"*****************************************************************"<<endl;
+		cout<< "			Remove Reminder Option"<<endl<<endl;
+		if(numReminders<1){
+			cout<<"There are no Reminders in the App"<<endl;
+			menuPause();
+		} else {
+			cout<<"The current Reminders list is :"<<endl<<endl;
+			printAllReminders();
+			cout<<endl<<"Enter a Reminder number from 1 to "<<numReminders<<" to be removed"<<endl;
+			cin>> code;
+			if(code < 1 || code > numReminders){
+			  cout<<endl<<"Option out of range"<<endl;
+			  menuPause();
+			}
+			else {
+			  int i;
+			  for(i=code-1;i<numReminders-1;i++){
+				//Use the default shallow asign function
+				remindersArr[i]=remindersArr[i+1];
+				//Use the Item.setId Method to update the Id
+				remindersArr[i].setId(i+1);
+			  }
+			  numReminders--;
+			  cout<<"The new Reminders list is:"<<endl<<endl;
+			  printAllReminders();
+			  menuPause();
+			}
+		}
+	}*/
+
+	//Member function for editing a Event
+	void editEvents();
+	/*{
+	    int dd;
+	    int mm;
+	    int yyyy;
+		string description;
+		int code;
+		int type;
+		int hour;
+		int minu;
+		clearConsole();
+		cout<<"*****************************************************************"<<endl;
+		cout<< "			Edit Reminders Option"<<endl<<endl;
+		if(numReminders<1){
+			cout<<"There are no Reminders in the App"<<endl;
+			menuPause();
+		} else {
+			cout<<"Enter the Reminder number to be edited from this list :"<<endl<<endl;
+			printAllReminders();
+			cout<<endl<<"Enter a number from 1 to "<<numReminders<<endl;
+			cin>> code;
+			if(code < 1 || code > numReminders){
+				cout<<endl<<"Option out of range"<<endl;
+				menuPause();
+			}
+			else {			
+				cout<<"Please enter the new description for your Reminder"<<endl;
+				cin.ignore();
+				getline(cin,description);
+				cout<<"Please enter the new target Year, number from 2000 to 2099"<<endl;
+				cin>> yyyy;
+				cout<<"Please enter the new target Month, number from 1 to 12"<<endl;
+				cin>> mm;
+				cout<<"Please enter the new target Day, number from 1 to 31"<<endl;
+				cin>> dd;
+				cout<<"Please enter the new target  Hour, number from 0 to 23"<<endl;
+				cin>> hour;
+				cout<<"Please enter the new target Minute, number from 0 to 59"<<endl;
+				cin>> minu;
+				cout<<endl<<"There are 5 diferents types of Reminders."<<endl;
+				cout<<"Please, select the new type by entering the option number:"<<endl<<endl;
+				cout<< "1. Deadline"<<endl;
+				cout<< "2. Birthday"<<endl;
+				cout<< "3. Aniversary"<<endl;
+				cout<< "4. Travel"<<endl;
+				cout<< "5. Public Holiday"<<endl<<endl;
+				cout<<"Please enter the option:"<<endl;
+				cin>> type;
+				remindersArr[code-1].setReminder(code,description,dd,mm,yyyy,type,hour,minu);
+				cout<<"The new list of Reminders is:"<<endl<<endl;
+				printAllReminders();
+				menuPause();
+			}
+		}
+	}*/
+
+/**************************************************************************                                    
+* Group of Class:  	Diary
 * Function Group:  	Diary Files
 * Scope			: 	Management of all functionalities related to Files
 * Numel      	:   2 Functions.                                                                                        
@@ -973,7 +1394,7 @@ class Diary
 	} 
 
 /**************************************************************************                                    
-* Class        	:  	Diary
+* Group of Class:  	Diary
 * Function Group:  	Searchs and Reports
 * Scope			: 	Management of Searchs and Reports functionalities
 * Numel      	:   1 Function.                                                                                        
@@ -1023,12 +1444,12 @@ class Diary
 	}
  
 /**************************************************************************                                    
-* Class        	:  	Diary
+* Group of Class:  	Diary
 * Function Group:  	Menu and Sub Menus
 * Scope			: 	Management of Main Menu and Sub Menus
 * Numel      	:   4 Functions.                                                                                        
 **************************************************************************/
-	//Menu ToDo of the Diary Class
+	//Sub-Menu ToDo of the Diary Class
     void ToDoMenu(){        
         int option=9;
         while (option!=0){
@@ -1070,7 +1491,7 @@ class Diary
         }
     }
 
-//Menu Reminders of the Diary Class
+    //Sub-Menu Reminders of the Diary Class
     void RemindersMenu(){        
         int option=9;
         while (option!=0){
@@ -1109,6 +1530,46 @@ class Diary
         }
     }
 
+	 //Sub-Menu Events of the Diary Class
+    void EventsMenu(){        
+        int option=9;
+        while (option!=0){
+        	clearConsole();
+            cout<<"*****************************************************************"<<endl;
+            cout<< "			The Diary App Ver 3.0"<<endl;
+			cout<<"*****************************************************************"<<endl;
+            cout<< "			       Events Menu"<<endl<<endl;
+            cout<< "Select one option by entering the option number:"<<endl<<endl;
+            cout<< "1. Add Event"<<endl;
+            cout<< "2. Delete Event"<<endl;
+            cout<< "3. Edit Event"<<endl;
+			cout<< "4. Print all Event"<<endl;
+            cout<< "0. Back to Main Menu"<<endl;
+            cout<<"*****************************************************************"<<endl;
+            cout<<"Please enter the option:"<<endl;
+            cin>> option;
+            if (option==1){
+                addEvent();
+            } else if (option==2){
+                //removeEvent();
+            } else if (option==3){
+                //editEvent();
+            } else if (option==4){
+				clearConsole();
+				cout<<"*****************************************************************"<<endl;
+				cout<< "			All Event"<<endl<<endl;
+                //printAllEvents ();
+				cout<<endl<<"Going back to previous menu."<<endl;
+				menuPause();                
+            } else if (option==0){
+                cout<<endl<<"Going Back to Main Menu "<<endl;
+            } else {
+                cout<<"Invalid Option"<<endl;
+            }
+        }
+    }
+
+
 	//Main menu of the Diary Class
     void mainMenu(){        
         
@@ -1136,12 +1597,12 @@ class Diary
             } else if (option==2){
                 RemindersMenu();
             } else if (option==3){
-                
+                EventsMenu();
             } else if (option==4){
 				clearConsole();
 				cout<<"*****************************************************************"<<endl;
 				cout<< "			All Diary Items by Type"<<endl<<endl;
-                cout<<endl<<"  ToDos :"<<endl<<endl;
+                cout<<"  ToDos :"<<endl<<endl;
 				printAllToDos ();
 				cout<<endl<<"  Reminders :"<<endl<<endl;
 				printAllReminders ();
@@ -1162,7 +1623,7 @@ class Diary
     }
 
 /**************************************************************************                                    
-* Class        	:  	Diary
+* Group of Class:  	Diary
 * Function Group:  	Destructors
 * Scope			: 	Management of Destructors
 * Numel      	:   1 Function.                                                                                        
@@ -1173,11 +1634,19 @@ class Diary
 		//Free the memory of all Arrays in the Heap
 		delete[] this->toDosArr;
 		delete[] this->remindersArr;
+		delete[] this->eventsArr;
     }
 
 
 };
 
+/**************************************************************************                                    
+* Class        	:  	main function
+* Type			:  	function
+* Scope			: 	All App
+* Variables   	:   1
+* Functions		:   None                                                                               
+**************************************************************************/
 int main()
 
 {
