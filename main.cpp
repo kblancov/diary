@@ -3,14 +3,14 @@
 * Program      :  Financial Computing MSc at QMUL, Promo 2019/2019  
 * Project      :  Coursework, INTRO OBJECT-ORIENTED PROGRAMMING - 2019/20                                           
 * License      :  Apache  Ver 2.0, www.apache.org/licenses/LICENSE-2.0           
-* Description  :  Complete coursework solution with,
+* Description  :  Final version of the coursework solution with,
 *                 - A Main class "Diary" that contains all the system
-*                 - An  abstract class "Item" with the common elmenets
+*                 - An abstract class "Item" with the common elments
 *                 - 3 Sub Classes "Event", "Reminder", "ToDo"
 *                 - 2 independent Classes "Date" and "Time"                         
 *                                                                             
 * Other files  :  none
-* Last Review  :  17-Dic-2019                                                  
+* Last Review  :  18-Dic-2019                                                  
 * Author       :  Camilo BLANCO                                                 
 * Mail         :  camilo.blanco@arcelec.com                                               
 **************************************************************************/
@@ -234,7 +234,7 @@ class Time
 * Type			:  	Abstract class, Parent of ToDo, Reminder and Event
 * Scope			: 	Common type for Diary Items
 * Variables   	:   3
-* Functions		:   7 + 1 Pure virtual                                                                                    
+* Functions		:   7 + 2 Pure virtual                                                                                    
 **************************************************************************/
 class Item
 {
@@ -312,6 +312,9 @@ class Item
 		return 0;
 	}
 
+	//Virtual function to study if the Item is active on a given Date
+	virtual int activeOnDate(int dd, int mm, int yy)=0;
+
 	//Destructor
 	~Item ()
 	{
@@ -324,7 +327,7 @@ class Item
 * Type			:  	Child class, Decent from Item
 * Scope			: 	ToDo type for Diary Items
 * Variables   	:   Parent + 2
-* Functions		:   Inherited + 9                                                                                    
+* Functions		:   Inherited + 10                                                                                    
 **************************************************************************/
 class ToDo : public Item
 {
@@ -403,7 +406,7 @@ class ToDo : public Item
 	    cout << "- TD " << id << ", added ";
 		addedDate.printDate();
 		cout << " | Status: " << status;
-		cout << " | Due : ";
+		cout << " | Due ";
 		dueDate.printDate();
 		cout << " | Desc. " << itemDescription;
 	    cout << " | "<<endl;
@@ -434,6 +437,15 @@ class ToDo : public Item
 		myStream.close();
 	}
 
+	//compares the object date data with the parameters
+	//Returns 1 if it the Item is active on that date, else 0. 
+	int activeOnDate(int dd, int mm, int yy)
+	{
+	    if(this->dueDate.compareDate(dd, mm, yy)==1 && this->status=="Incomplete")
+			return 1;
+		return 0;
+	}
+
 	//Destructor
 	~ToDo ()
 	{
@@ -446,7 +458,7 @@ class ToDo : public Item
 * Type			:  	Child class, Decent from Item
 * Scope			: 	Reminder type for Diary Items
 * Variables   	:   Parent + 3
-* Functions		:   Inherited + 7                                                                                    
+* Functions		:   Inherited + 8                                                                                    
 **************************************************************************/
 class Reminder : public Item
 {
@@ -546,7 +558,7 @@ class Reminder : public Item
 	{
 	    cout << "- Rem " << id << ", added ";
 		addedDate.printDate();
-		cout << " | Target: ";
+		cout << " | Target ";
 		targetDate.printDate();
 		cout << " at ";
 		targetTime.printTime();
@@ -585,6 +597,15 @@ class Reminder : public Item
 		myStream.close();
 	}
 
+	//compares the object date data with the parameters
+	//Returns 1 if it the Item is active on that date, else 0. 
+	int activeOnDate(int dd, int mm, int yy)
+	{
+	    if(this->targetDate.compareDate(dd, mm, yy)==1)
+			return 1;
+		return 0;
+	}
+
 	//Destructor
 	~Reminder ()
 	{
@@ -596,8 +617,8 @@ class Reminder : public Item
 * Class        	:  	Event
 * Type			:  	Child class, Decent from Item
 * Scope			: 	Event type for Diary Items
-* Variables   	:   Parent + ...
-* Functions		:   Inherited + ...                                                                                    
+* Variables   	:   Parent + 7
+* Functions		:   Inherited + 8                                                                                    
 **************************************************************************/
 class Event : public Item
 {
@@ -744,9 +765,9 @@ class Event : public Item
 		cout << " at ";
 		endTime.printTime();
 		cout << " | Type: " << eventType;
-		cout << " | Loc: " << location;
-		cout << " | Atts: " << attendees;
-		cout << " | Desc: " << itemDescription;
+		cout << " | Loc. " << location;
+		cout << " | Atts. " << attendees;
+		cout << " | Desc. " << itemDescription;
 	    cout << " | "<<endl;
 	}
 
@@ -787,6 +808,15 @@ class Event : public Item
 			myStream << attendees << endl;
 		}
 		myStream.close();
+	}
+
+	//compares the object date data with the parameters
+	//Returns 1 if it the Item is active on that date, else 0. 
+	int activeOnDate(int dd, int mm, int yy)
+	{
+	    if(this->startDate.compareDate(dd, mm, yy)==1)
+			return 1;
+		return 0;
 	}
 
 	//Destructor
@@ -1462,7 +1492,7 @@ class Diary
 * Group of Class:  	Diary
 * Function Group:  	Searchs and Reports
 * Scope			: 	Management of Searchs and Reports functionalities
-* Numel      	:   1 Function.                                                                                        
+* Numel      	:   2 Functions.                                                                                        
 **************************************************************************/
 
 	//Reads a Date from the console and print coincidences
@@ -1474,8 +1504,8 @@ class Diary
 		int results=0;
 		clearConsole();
 		cout<<"*****************************************************************"<<endl;
-		cout<< "			Search by Added Date Option"<<endl<<endl;
-		if(numToDo<1){
+		cout<< "			Search by Added Date"<<endl<<endl;
+		if(numToDo<1 && numReminders<1 && numEvents<1){
 			cout<<"There are no items in the App"<<endl;
 			menuPause();
 		} else {
@@ -1502,18 +1532,67 @@ class Diary
 							results++;
 						}
 				}
+				cout<<endl<<"  Events :"<<endl<<endl;
 				for (int i=0; i<numEvents; i++){
 						if(eventsArr[i].compareAddedDate(dd,mm,yyyy)==1){
 							eventsArr[i].printItem();
 							results++;
 						}
 				}
-				cout<<endl<<"  Total Results :"<<endl<<endl;
-				cout<<"-"<<results<<" records found for the entered added date search"<<endl;
+				cout<<endl<<"Total Results."<<endl<<endl;
+				cout<<"- "<<results<<" records found added on the "<<dd<<"-"<<mm<<"-"<<yyyy<<endl;
 				menuPause();
 		}
 	}
  
+	int searchByGivenDate(){
+			int dd;
+			int mm;
+			int yyyy;
+			int results=0;
+			clearConsole();
+			cout<<"*****************************************************************"<<endl;
+			cout<< "			Search by Given Date"<<endl<<endl;
+
+			if(numToDo<1 && numReminders<1 && numEvents<1){
+				cout<<"There are no items in the App"<<endl;
+				menuPause();
+			} else {
+					cout<<"Please enter the Given Year, number from 2000 to 2099"<<endl;
+					cin>> yyyy;
+					cout<<"Please enter the Given Month, number from 1 to 12"<<endl;
+					cin>> mm;
+					cout<<"Please enter the Given Day, number from 1 to 31"<<endl;
+					cin>> dd;
+					clearConsole();
+					cout<<endl<<"*****************************************************************"<<endl;
+					cout<<"Search Results."<<endl<<endl;
+					cout<<"  ToDos :"<<endl<<endl;
+					for (int i=0; i<numToDo; i++){
+							if(toDosArr[i].activeOnDate(dd,mm,yyyy)==1){
+								toDosArr[i].printItem();
+								results++;
+							}
+					}
+					cout<<endl<<"  Reminders :"<<endl<<endl;
+					for (int i=0; i<numReminders; i++){
+							if(remindersArr[i].activeOnDate(dd,mm,yyyy)==1){
+								remindersArr[i].printItem();
+								results++;
+							}
+					}
+					cout<<endl<<"  Events :"<<endl<<endl;
+					for (int i=0; i<numEvents; i++){
+							if(eventsArr[i].activeOnDate(dd,mm,yyyy)==1){
+								eventsArr[i].printItem();
+								results++;
+							}
+					}
+					cout<<endl<<"Total Results."<<endl<<endl;
+					cout<<"- "<<results<<" records found for "<<dd<<"-"<<mm<<"-"<<yyyy<<endl;
+					menuPause();
+			}
+		}
 /**************************************************************************                                    
 * Group of Class:  	Diary
 * Function Group:  	Menu and Sub Menus
@@ -1658,6 +1737,7 @@ class Diary
             cout<< "3. Manage Events"<<endl;
             cout<< "4. Print all Items by Type"<<endl;
 			cout<< "5. Search by Added Date"<<endl;
+			cout<< "6. Search by Given Date"<<endl;
             cout<< "0. To exit the program"<<endl;
             cout<<"*****************************************************************"<<endl;
             cout<<"Please enter the option:"<<endl;
@@ -1682,6 +1762,8 @@ class Diary
 				menuPause();                
 			} else if (option==5){
                 searchByAddedDate ();
+			} else if (option==6){
+                searchByGivenDate ();
             } else if (option==0){
 			 	saveDiary ();
                 cout<<endl<<"Thank you for using The Diary App, have a nice day. "<<endl<<endl;
