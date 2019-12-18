@@ -4,7 +4,7 @@ ToDo
 15
 12
 2019
-Primera tarea
+First Task
 20
 12
 2019
@@ -14,7 +14,7 @@ ToDo
 16
 12
 2019
-Segunda Tarea
+Second Task
 20
 12
 2019
@@ -24,7 +24,7 @@ ToDo
 17
 12
 2019
-Tercera Tarea
+Third Task
 31
 12
 2019
@@ -34,14 +34,14 @@ ToDo
 17
 12
 2019
-Cuarta Tarea
+Fourth Task
 8
 1
 2020
 Incomplete
 Reminder
 1
-17
+15
 12
 2019
 Santa Arrival
@@ -68,10 +68,67 @@ Reminder
 17
 12
 2019
-My Birth Day
+Trip to L.A.
 25
 6
 2020
-Birthday
+Travel
+14
 20
+Event
+1
+16
+12
+2019
+New Event
+16
+12
+2019
+8
+0
+7
+1
+2020
+13
 30
+Conference
+Far Away in 15B CR11.
+Camilo and Fenix
+Event
+2
+17
+12
+2019
+Second Event
+1
+1
+2020
+8
+0
+2
+1
+2020
+20
+0
+Team-building event
+QMUL
+Camilo, Marco, Tera.
+Event
+3
+17
+12
+2019
+Last Event
+20
+1
+2020
+9
+0
+8
+4
+2020
+16
+30
+Conference
+Mile End
+All students

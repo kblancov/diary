@@ -625,7 +625,7 @@ class Event : public Item
 	}
 
 	//Parametrized constructor
-	Event (int code, string description, int type, string location, string attendees, int start_dd, int start_mm, int start_yyyy, int start_hour, int start_minu, int end_dd, int end_mm, int end_yyyy, int end_hour, int end_minu) :
+	Event (int code, string description, int type, string loc, string att, int start_dd, int start_mm, int start_yyyy, int start_hour, int start_minu, int end_dd, int end_mm, int end_yyyy, int end_hour, int end_minu) :
 			Item (code,description)
 	{
 		
@@ -643,6 +643,9 @@ class Event : public Item
 		else
 			this->eventType="";
 
+		this->location=loc;
+		this->attendees=att;
+
 		this->startDate.setDate(start_dd, start_mm, start_yyyy);
 		this->startTime.setTime(start_hour,start_minu);
 		this->endDate.setDate(end_dd, end_mm, end_yyyy);
@@ -650,9 +653,11 @@ class Event : public Item
 	}
 
 	//Sets Event data
-	void setEvent(int code, string description, int type, string location, string attendees, int start_dd, int start_mm, int start_yyyy, int start_hour, int start_minu, int end_dd, int end_mm, int end_yyyy, int end_hour, int end_minu)
+	void setEvent(int code, string description, int type, string loc, string att, int start_dd, int start_mm, int start_yyyy, int start_hour, int start_minu, int end_dd, int end_mm, int end_yyyy, int end_hour, int end_minu)
 	{
-		//set the Event type acording to the options 
+		//set the Event type acording to the options
+		this->id=code;
+      	this->itemDescription = description; 
 		if (type==1)
 			this->eventType="Meeting";
 		else if (type==2)
@@ -666,10 +671,14 @@ class Event : public Item
 		else
 			this->eventType="";
 
+		this->location=loc;
+		this->attendees=att;
+
 		this->startDate.setDate(start_dd, start_mm, start_yyyy);
 		this->startTime.setTime(start_hour,start_minu);
 		this->endDate.setDate(end_dd, end_mm, end_yyyy);
 		this->endTime.setTime(end_hour,end_minu);
+
 	}
 
 	//Loads the Event Data from a given open ofstream
@@ -690,6 +699,7 @@ class Event : public Item
 			myStream >> month;
 			myStream >> year;
 			addedDate.setDate(day,month,year);
+
 			myStream.ignore();
 			getline(myStream,itemDescription);
 
@@ -711,9 +721,11 @@ class Event : public Item
 
 			myStream.ignore();
 			getline(myStream,eventType);
-			myStream.ignore();
+
+			//myStream.ignore();
 			getline(myStream,location);
-			myStream.ignore();
+
+			//myStream.ignore();
 			getline(myStream,attendees);
 		}
 	}
@@ -723,11 +735,11 @@ class Event : public Item
 	{
 	    cout << "- Event " << id << ", added on ";
 		addedDate.printDate();
-		cout << " | Start : ";
+		cout << " | Starts ";
 		startDate.printDate();
 		cout << " at ";
 		startTime.printTime();
-		cout << " | End ";
+		cout << " | Ends ";
 		endDate.printDate();
 		cout << " at ";
 		endTime.printTime();
@@ -1157,13 +1169,13 @@ class Diary
 **************************************************************************/
 
 	//Print All Events in the Diary
-	void printAllEvents ();
-	/*{
+	void printAllEvents ()
+	{
 	    int i;
-	    for (i=0;i<numReminders;i++){
-	        remindersArr[i].printItem();
+	    for (i=0;i<numEvents;i++){
+	        eventsArr[i].printItem();
 	    }
-	} */
+	}
 
 	//Member function for adding an Event
 	void addEvent()
@@ -1183,6 +1195,7 @@ class Diary
 		int type=0;
 		string location="";
 		string attendees="";
+
 		//Print the user interface
 		clearConsole();
 		cout<<"*****************************************************************"<<endl;
@@ -1229,115 +1242,158 @@ class Diary
 		cin>> type;
 
 		//Read the location
-		cout<<"Please enter the location of your new Event"<<endl;
+		cout<<endl<<"Please enter the location of your new Event"<<endl;
 		cin.ignore();
 		getline(cin,location);
 
 		//Read the attendee
-		cout<<"Please enter the attendees to your new Event"<<endl;
-		cout<<"You can enter various names separted by commas all in the same line"<<endl;
-		cin.ignore();
+		cout<<endl<<"Enter the attendees to your new Event, all in the same line"<<endl;
+		//cin.ignore();
 		getline(cin,attendees);
 
 		numEvents++;
-
 		eventsArr[numEvents-1].setEvent(numEvents,description,type, location, attendees, start_dd, start_mm, start_yyyy, start_hour, start_minu, end_dd, end_mm, end_yyyy, end_hour, end_minu);
 		cout<<endl<<"The event:"<<numEvents<<" was added to your Diary:"<<endl;
 		eventsArr[numEvents-1].printItem();
-		menuPause();
+
+		//menuPause() has a Glitch here, so do it manually and ajust
+		cout << endl << "Press enter to continue..." << endl;
+    	//cin.ignore();
+    	cin.get();
 	}
 
 	//Member function for removing an Event
-	void removeEvents();
-	/*{
+	void removeEvent()
+	{
 	    int code;
 		clearConsole();
 		cout<<"*****************************************************************"<<endl;
-		cout<< "			Remove Reminder Option"<<endl<<endl;
-		if(numReminders<1){
-			cout<<"There are no Reminders in the App"<<endl;
+		cout<< "			Remove Event Option"<<endl<<endl;
+		if(numEvents<1){
+			cout<<"There are no Events in the App"<<endl;
 			menuPause();
 		} else {
-			cout<<"The current Reminders list is :"<<endl<<endl;
-			printAllReminders();
-			cout<<endl<<"Enter a Reminder number from 1 to "<<numReminders<<" to be removed"<<endl;
+			cout<<"The current Events list is :"<<endl<<endl;
+			printAllEvents();
+			cout<<endl<<"Enter an Event number from 1 to "<<numEvents<<" to be removed"<<endl;
 			cin>> code;
-			if(code < 1 || code > numReminders){
+			if(code < 1 || code > numEvents){
 			  cout<<endl<<"Option out of range"<<endl;
 			  menuPause();
 			}
 			else {
 			  int i;
-			  for(i=code-1;i<numReminders-1;i++){
+			  for(i=code-1;i<numEvents-1;i++){
 				//Use the default shallow asign function
-				remindersArr[i]=remindersArr[i+1];
+				eventsArr[i]=eventsArr[i+1];
 				//Use the Item.setId Method to update the Id
-				remindersArr[i].setId(i+1);
+				eventsArr[i].setId(i+1);
 			  }
-			  numReminders--;
-			  cout<<"The new Reminders list is:"<<endl<<endl;
-			  printAllReminders();
+			  numEvents--;
+			  cout<<"The new Event list is:"<<endl<<endl;
+			  printAllEvents();
 			  menuPause();
 			}
 		}
-	}*/
+	}
 
 	//Member function for editing a Event
-	void editEvents();
-	/*{
-	    int dd;
-	    int mm;
-	    int yyyy;
-		string description;
+	void editEvent()
+	{
+	    //Declare and initialize variables
+	    string description="";
+	    int start_dd=0;
+	    int start_mm=0;
+	    int start_yyyy=0;
+		int start_hour=0;
+		int start_minu=0;
+		int end_dd=0;
+	    int end_mm=0;
+	    int end_yyyy=0;
+		int end_hour=0;
+		int end_minu=0;
+		int type=0;
+		string location="";
+		string attendees="";
+
 		int code;
-		int type;
-		int hour;
-		int minu;
+		//Print the user interface
 		clearConsole();
 		cout<<"*****************************************************************"<<endl;
-		cout<< "			Edit Reminders Option"<<endl<<endl;
-		if(numReminders<1){
-			cout<<"There are no Reminders in the App"<<endl;
+		cout<< "			Edit Event Option"<<endl<<endl;
+		if(numEvents<1){
+			cout<<"There are no Events in the App"<<endl;
 			menuPause();
 		} else {
-			cout<<"Enter the Reminder number to be edited from this list :"<<endl<<endl;
-			printAllReminders();
-			cout<<endl<<"Enter a number from 1 to "<<numReminders<<endl;
+			cout<<"Enter the Event number to be edited from this list :"<<endl<<endl;
+			printAllEvents();
+			cout<<endl<<"Enter a number from 1 to "<<numEvents<<endl;
 			cin>> code;
-			if(code < 1 || code > numReminders){
+			if(code < 1 || code > numEvents){
 				cout<<endl<<"Option out of range"<<endl;
 				menuPause();
 			}
 			else {			
-				cout<<"Please enter the new description for your Reminder"<<endl;
+				//Read the description
+				cout<<"Please enter the new description of your Event"<<endl;
 				cin.ignore();
 				getline(cin,description);
-				cout<<"Please enter the new target Year, number from 2000 to 2099"<<endl;
-				cin>> yyyy;
-				cout<<"Please enter the new target Month, number from 1 to 12"<<endl;
-				cin>> mm;
-				cout<<"Please enter the new target Day, number from 1 to 31"<<endl;
-				cin>> dd;
-				cout<<"Please enter the new target  Hour, number from 0 to 23"<<endl;
-				cin>> hour;
-				cout<<"Please enter the new target Minute, number from 0 to 59"<<endl;
-				cin>> minu;
-				cout<<endl<<"There are 5 diferents types of Reminders."<<endl;
+				
+				//Read the start hour
+				cout<<"Please enter the new start Year, number from 2000 to 2099"<<endl;
+				cin>> start_yyyy;
+				cout<<"Please enter the new start Month, number from 1 to 12"<<endl;
+				cin>> start_mm;
+				cout<<"Please enter the new start Day, number from 1 to 31"<<endl;
+				cin>> start_dd;
+				cout<<"Please enter the new start  Hour, number from 0 to 23"<<endl;
+				cin>> start_hour;
+				cout<<"Please enter the new start Minute, number from 0 to 59"<<endl;
+				cin>> start_minu;
+			
+				//Read the end hour
+				cout<<"Please enter the new end Year, number from 2000 to 2099"<<endl;
+				cin>> end_yyyy;
+				cout<<"Please enter the new end Month, number from 1 to 12"<<endl;
+				cin>> end_mm;
+				cout<<"Please enter the new end Day, number from 1 to 31"<<endl;
+				cin>> end_dd;
+				cout<<"Please enter the new end Hour, number from 0 to 23"<<endl;
+				cin>> end_hour;
+				cout<<"Please enter the new end Minute, number from 0 to 59"<<endl;
+				cin>> end_minu;
+
+				//Select the event type
+				cout<<endl<<"There are 5 diferents types of Events"<<endl;
 				cout<<"Please, select the new type by entering the option number:"<<endl<<endl;
-				cout<< "1. Deadline"<<endl;
-				cout<< "2. Birthday"<<endl;
-				cout<< "3. Aniversary"<<endl;
-				cout<< "4. Travel"<<endl;
-				cout<< "5. Public Holiday"<<endl<<endl;
+				cout<< "1. Meeting"<<endl;
+				cout<< "2. Conference"<<endl;
+				cout<< "3. Seminar"<<endl;
+				cout<< "4. Talk"<<endl;
+				cout<< "5. Team-building event"<<endl<<endl;
 				cout<<"Please enter the option:"<<endl;
 				cin>> type;
-				remindersArr[code-1].setReminder(code,description,dd,mm,yyyy,type,hour,minu);
-				cout<<"The new list of Reminders is:"<<endl<<endl;
-				printAllReminders();
-				menuPause();
+
+				//Read the location
+				cout<<endl<<"Please enter the location of your new Event"<<endl;
+				cin.ignore();
+				getline(cin,location);
+
+				//Read the attendee
+				cout<<endl<<"Enter the attendees to your new Event, all in the same line"<<endl;
+				//cin.ignore();
+				getline(cin,attendees);
+
+				eventsArr[code-1].setEvent(code,description,type, location, attendees, start_dd, start_mm, start_yyyy, start_hour, start_minu, end_dd, end_mm, end_yyyy, end_hour, end_minu);
+				cout<<"The new list of Events is:"<<endl<<endl;
+				printAllEvents();
+				//menuPause() has a Glitch here, so do it manually and ajust
+				cout << endl << "Press enter to continue..." << endl;
+				//cin.ignore();
+				cin.get();
 			}
 		}
-	}*/
+	}
 
 /**************************************************************************                                    
 * Group of Class:  	Diary
@@ -1365,6 +1421,10 @@ class Diary
 		for (int i=0;i<numReminders;i++){
 			remindersArr[i].saveReminder(fileName);
 		}
+		//Loop over eventsArr and append each Event data to the file diary.txt
+		for (int i=0;i<numEvents;i++){
+			eventsArr[i].saveEvent(fileName);
+		}
 		cout<<endl<<"Diary saved in "<<fileName <<endl;
 		return 1;
 
@@ -1386,6 +1446,11 @@ class Diary
 				if((line.compare("Reminder")) == 0){
 						remindersArr[numReminders].loadReminder(myStream,numReminders+1);
 						numReminders++;	
+				}
+				//if the line is a Reminder
+				if((line.compare("Event")) == 0){
+						eventsArr[numEvents].loadEvent(myStream,numEvents+1);
+						numEvents++;	
 				}
 			}
 			myStream.close();
@@ -1434,6 +1499,12 @@ class Diary
 				for (int i=0; i<numReminders; i++){
 						if(remindersArr[i].compareAddedDate(dd,mm,yyyy)==1){
 							remindersArr[i].printItem();
+							results++;
+						}
+				}
+				for (int i=0; i<numEvents; i++){
+						if(eventsArr[i].compareAddedDate(dd,mm,yyyy)==1){
+							eventsArr[i].printItem();
 							results++;
 						}
 				}
@@ -1540,10 +1611,10 @@ class Diary
 			cout<<"*****************************************************************"<<endl;
             cout<< "			       Events Menu"<<endl<<endl;
             cout<< "Select one option by entering the option number:"<<endl<<endl;
-            cout<< "1. Add Event"<<endl;
-            cout<< "2. Delete Event"<<endl;
-            cout<< "3. Edit Event"<<endl;
-			cout<< "4. Print all Event"<<endl;
+            cout<< "1. Add an Event"<<endl;
+            cout<< "2. Delete an Event"<<endl;
+            cout<< "3. Edit an Event"<<endl;
+			cout<< "4. Print all Events"<<endl;
             cout<< "0. Back to Main Menu"<<endl;
             cout<<"*****************************************************************"<<endl;
             cout<<"Please enter the option:"<<endl;
@@ -1551,14 +1622,14 @@ class Diary
             if (option==1){
                 addEvent();
             } else if (option==2){
-                //removeEvent();
+                removeEvent();
             } else if (option==3){
-                //editEvent();
+                editEvent();
             } else if (option==4){
 				clearConsole();
 				cout<<"*****************************************************************"<<endl;
-				cout<< "			All Event"<<endl<<endl;
-                //printAllEvents ();
+				cout<< "			All Events"<<endl<<endl;
+                printAllEvents ();
 				cout<<endl<<"Going back to previous menu."<<endl;
 				menuPause();                
             } else if (option==0){
@@ -1568,7 +1639,6 @@ class Diary
             }
         }
     }
-
 
 	//Main menu of the Diary Class
     void mainMenu(){        
@@ -1606,6 +1676,8 @@ class Diary
 				printAllToDos ();
 				cout<<endl<<"  Reminders :"<<endl<<endl;
 				printAllReminders ();
+				cout<<endl<<"  Events :"<<endl<<endl;
+				printAllEvents ();
 				cout<<endl<<"Going back to previous menu."<<endl;
 				menuPause();                
 			} else if (option==5){

@@ -4,7 +4,7 @@ ToDo
 15
 12
 2019
-Primera tarea
+First Task
 20
 12
 2019
@@ -14,7 +14,7 @@ ToDo
 16
 12
 2019
-Segunda Tarea
+Second Task
 20
 12
 2019
@@ -24,7 +24,7 @@ ToDo
 17
 12
 2019
-Tercera Tarea
+Third Task
 31
 12
 2019
@@ -34,7 +34,7 @@ ToDo
 17
 12
 2019
-Cuarta Tarea
+Fourth Task
 8
 1
 2020
@@ -53,7 +53,7 @@ Deadline
 30
 Reminder
 2
-16
+17
 12
 2019
 Kings Arrival
@@ -68,10 +68,67 @@ Reminder
 17
 12
 2019
-Moving
-8
-1
+Trip to L.A.
+25
+6
 2020
 Travel
-15
-15
+14
+20
+Event
+1
+16
+12
+2019
+First Event
+1
+1
+2000
+1
+1
+2
+1
+2000
+2
+2
+Seminar
+New Loc
+New Poeple
+Event
+2
+17
+12
+2019
+Second Event
+1
+1
+2020
+8
+0
+2
+1
+2020
+20
+0
+Team-building event
+QMUL
+Camilo, Marco, Tera.
+Event
+3
+17
+12
+2019
+Last Event
+20
+1
+2020
+9
+0
+8
+4
+2020
+16
+30
+Conference
+Mile End
+All students
